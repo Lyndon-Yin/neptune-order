@@ -34,8 +34,12 @@
     },
     "autoload": {
         "psr-4": {
+            "Lyndon\\": "lyndon/",
             "App\\": "app/"
         },
+        "files": [
+            "lyndon/helpers.php"
+        ],
         "classmap": [
             "database/seeds",
             "database/factories"
