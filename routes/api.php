@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group([
+    'middleware' => [
+    ]
+], function ($router) {
+    $router->any('{slug?}', function (Request $request) {
+        return \Lyndon\Route\Path4Router::route($request);
+    })->where('slug', '(.*)?');
 });
