@@ -126,20 +126,49 @@ return [
             'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
         ],
 
+        // 默认redis
         'default' => [
-            'url' => env('REDIS_URL'),
-            'host' => env('REDIS_HOST', '127.0.0.1'),
+            'url'      => env('REDIS_URL'),
+            'host'     => env('REDIS_HOST', '127.0.0.1'),
             'password' => env('REDIS_PASSWORD', null),
-            'port' => env('REDIS_PORT', '6379'),
+            'port'     => env('REDIS_PORT', '6379'),
             'database' => env('REDIS_DB', '0'),
         ],
 
+        // 缓存服务
         'cache' => [
-            'url' => env('REDIS_URL'),
-            'host' => env('REDIS_HOST', '127.0.0.1'),
-            'password' => env('REDIS_PASSWORD', null),
-            'port' => env('REDIS_PORT', '6379'),
+            'url'      => env('REDIS_CACHE_URL'),
+            'host'     => env('REDIS_CACHE_HOST', '127.0.0.1'),
+            'password' => env('REDIS_CACHE_PASSWORD', null),
+            'port'     => env('REDIS_CACHE_PORT', '6379'),
             'database' => env('REDIS_CACHE_DB', '1'),
+        ],
+
+        // 分布式锁
+        'distributedLock' => [
+            'url'      => env('REDIS_DISTRIBUTE_URL'),
+            'host'     => env('REDIS_DISTRIBUTE_HOST', '127.0.0.1'),
+            'password' => env('REDIS_DISTRIBUTE_PASSWORD', null),
+            'port'     => env('REDIS_DISTRIBUTE_PORT', '6379'),
+            'database' => env('REDIS_DISTRIBUTE_DB', '1'),
+        ],
+
+        // 乐观锁
+        'optimisticLock' => [
+            'url'      => env('REDIS_OPTIMISTIC_URL'),
+            'host'     => env('REDIS_OPTIMISTIC_HOST', '127.0.0.1'),
+            'password' => env('REDIS_OPTIMISTIC_PASSWORD', null),
+            'port'     => env('REDIS_OPTIMISTIC_PORT', '6379'),
+            'database' => env('REDIS_OPTIMISTIC_DB', '1'),
+        ],
+
+        // 雪花算法
+        'snowflake' => [
+            'url'      => env('REDIS_SNOWFLAKE_URL'),
+            'host'     => env('REDIS_SNOWFLAKE_HOST', '127.0.0.1'),
+            'password' => env('REDIS_SNOWFLAKE_PASSWORD', null),
+            'port'     => env('REDIS_SNOWFLAKE_PORT', '6379'),
+            'database' => env('REDIS_SNOWFLAKE_DB', '1'),
         ],
 
     ],

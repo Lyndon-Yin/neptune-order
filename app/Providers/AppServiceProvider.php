@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 
+use Lyndon\Snowflake;
 use Lyndon\Logger\Log;
 use Illuminate\Support\ServiceProvider;
 
@@ -15,6 +16,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // 注册雪花算法，用于生成订单ID
+        $this->app->singleton(Snowflake::class, function () {
+            return new Snowflake(0, 0);
+        });
+
         // 本地开发环境打印sql日志
         if (app()->environment('dev')) {
             \DB::listen(function ($query) {

@@ -39,6 +39,7 @@
             "App\\": "app/"
         },
         "files": [
+            "app/helpers.php",
             "lyndon/helpers.php"
         ],
         "classmap": [
