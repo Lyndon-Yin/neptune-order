@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group([
     'middleware' => [
+        \Lyndon\CurlApi\CheckApiMiddleware::class
     ]
 ], function ($router) {
     $router->any('{slug?}', function (Request $request) {
