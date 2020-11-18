@@ -13,7 +13,7 @@ class OrderItemModel extends BaseOrderModel
         'order_id'             => 'int',
         'goods_id'             => 'int',
         'entity_id'            => 'int',
-        'entity_name'          => 'string',
+        'goods_name'           => 'string',
         'entity_img'           => 'string',
         'entity_price'         => 'float',
         'entity_spec_value'    => 'string',
