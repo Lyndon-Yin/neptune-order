@@ -2,6 +2,7 @@
 namespace App\Services\Orders\BaseCore;
 
 
+use App\Services\BaseService;
 use App\Traits\RepositoryLazyLoad\RepositoryLazyLoadOrder;
 
 /**
@@ -23,7 +24,7 @@ use App\Traits\RepositoryLazyLoad\RepositoryLazyLoadOrder;
  * @property string $createdAt 订单创建时间
  * @property array $orderItems 订单详情
  */
-class BaseOrderService
+class BaseOrderService extends BaseService
 {
     use RepositoryLazyLoadOrder;
 

@@ -64,6 +64,17 @@ class OrderCreateService extends BaseOrderService
     }
 
     /**
+     * @param int $deliveryType
+     * @return $this
+     */
+    public function pushDeliveryType(int $deliveryType)
+    {
+        $this->deliveryType = intval($deliveryType);
+
+        return $this;
+    }
+
+    /**
      * @return mixed|null
      * @throws \Exception
      */
