@@ -33,4 +33,25 @@ class OrderModel extends BaseOrderModel
     const DELIVERY_MAILING = 1;
     // 自提点自提
     const DELIVERY_FETCH = 2;
+
+    /** 订单状态 **/
+    // 未支付
+    const ORDER_INIT = 0;
+    // 已支付（商家）/待发货（会员）
+    const ORDER_PAYED = 20;
+    // 已发货（商家）/待收货（会员）
+    const ORDER_SHIP = 40;
+    // 已收货
+    const ORDER_GET = 60;
+    // 已完成
+    const ORDER_COMPLETED = 80;
+
+    // 未支付取消
+    const ORDER_NO_PAY_CANCEL = 100;
+    // 未支付取消已退款
+    const ORDER_NO_PAY_CANCEL_COMPLETED = 81;
+    // 已支付取消（商家）/待退款（会员）
+    const ORDER_PAYED_CANCEL = 110;
+    // 支付取消已退款
+    const ORDER_PAYED_CANCEL_COMPLETED = 82;
 }
