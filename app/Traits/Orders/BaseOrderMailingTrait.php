@@ -2,19 +2,17 @@
 namespace App\Traits\Orders;
 
 
+use App\Models\Orders\OrderModel;
+use Illuminate\Support\Facades\DB;
+use App\Repositories\Orders\OrderRepository;
 use App\Repositories\Orders\OrderMailingRepository;
 
 /**
  * Trait BaseOrderMailingTrait
  * @package App\Traits\Orders
  *
+ * @property OrderRepository $orderRepo
  * @property OrderMailingRepository $orderMailRepo
- *
- * @property string $consigneeName 收货人姓名
- * @property string $consigneePhone 收货人联系方式
- * @property string $shippingAddress 收货人地址
- * @property string $shippingNo 发货快递单号
- * @property string $shippingTime 发货时间
  */
 trait BaseOrderMailingTrait
 {
@@ -25,17 +23,42 @@ trait BaseOrderMailingTrait
     // 收货人姓名
     protected $consigneeName = '';
 
+    public function getConsigneeName()
+    {
+        return $this->consigneeName;
+    }
+
     // 收货人联系方式
     protected $consigneePhone = '';
+
+    public function getConsigneePhone()
+    {
+        return $this->consigneePhone;
+    }
 
     // 收货人地址
     protected $shippingAddress = '';
 
+    public function getShippingAddress()
+    {
+        return $this->shippingAddress;
+    }
+
     // 发货快递单号
     protected $shippingNo = '';
 
+    public function getShippingNo()
+    {
+        return $this->shippingNo;
+    }
+
     // 发货时间
     protected $shippingTime = null;
+
+    public function getShippingTime()
+    {
+        return $this->shippingTime;
+    }
 
     /**
      * 添加邮寄信息

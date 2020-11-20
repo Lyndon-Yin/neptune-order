@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Class OrderCreateService
- * @package App\Services\Orders
+ * @package App\Services\Orders\BaseCore
  */
 class OrderCreateService extends BaseOrderService
 {
@@ -15,33 +15,24 @@ class OrderCreateService extends BaseOrderService
     protected $buyEntities = [];
 
     /**
+     * OrderCreateService constructor.
      * @param int $merchantId
-     * @return $this
+     * @param int $userId
+     * @param array $buyEntities
+     * @throws \Exception
      */
-    public function pushMerchantId(int $merchantId)
+    public function __construct(int $merchantId, int $userId, array $buyEntities = [])
     {
         $this->merchantId = intval($merchantId);
+        if ($this->merchantId <= 0) {
+            throw new \Exception('商家ID不能为空');
+        }
 
-        return $this;
-    }
-
-    /**
-     * @param int $userId
-     * @return $this
-     */
-    public function pushUserId(int $userId)
-    {
         $this->userId = intval($userId);
+        if ($this->userId <= 0) {
+            throw new \Exception('用户ID不能为空');
+        }
 
-        return $this;
-    }
-
-    /**
-     * @param array $buyEntities
-     * @return $this
-     */
-    public function pushEntityIds(array $buyEntities)
-    {
         foreach ($buyEntities as $val) {
             if (empty($val['quantity']) || empty($val['entity_id'])) {
                 continue;
@@ -59,8 +50,6 @@ class OrderCreateService extends BaseOrderService
                 $this->buyEntities[$entityId] = $quantity;
             }
         }
-
-        return $this;
     }
 
     /**
@@ -81,12 +70,6 @@ class OrderCreateService extends BaseOrderService
     public function createOrder()
     {
         // 验证必填参数
-        if ($this->merchantId <= 0) {
-            throw new \Exception('商家ID不能为空');
-        }
-        if ($this->userId <= 0) {
-            throw new \Exception('用户ID不能为空');
-        }
         if (empty($this->buyEntities)) {
             throw new \Exception('购买的商品不能为空');
         }
