@@ -2,8 +2,8 @@
 namespace App\Services\Orders\NormalOrder;
 
 
-use App\Traits\Orders\BaseOrderMailingTrait;
 use App\Services\Orders\BaseCore\OrderCreateService;
+use App\Traits\Orders\OrderMailing\CreateOrderMailingTrait;
 
 /**
  * Class CreateNormalOrderService
@@ -11,7 +11,7 @@ use App\Services\Orders\BaseCore\OrderCreateService;
  */
 class CreateNormalOrderService extends OrderCreateService
 {
-    use BaseOrderMailingTrait;
+    use CreateOrderMailingTrait;
 
     /**
      * @throws \Exception
