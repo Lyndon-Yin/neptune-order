@@ -53,17 +53,6 @@ class OrderCreateService extends BaseOrderService
     }
 
     /**
-     * @param int $deliveryType
-     * @return $this
-     */
-    public function pushDeliveryType(int $deliveryType)
-    {
-        $this->deliveryType = intval($deliveryType);
-
-        return $this;
-    }
-
-    /**
      * @return mixed|null
      * @throws \Exception
      */
@@ -85,8 +74,7 @@ class OrderCreateService extends BaseOrderService
             $results = $this->doTransaction();
 
             // 订单详情表od_order_items添加
-            $this->sharedDiscountAmount();
-            $this->orderItemRepo->batchAddRepoList($this->orderItems);
+            $this->createOrderItemsTable();
 
             // 订单主表od_orders添加
             $this->createOrderTable();
@@ -202,6 +190,20 @@ class OrderCreateService extends BaseOrderService
 
         // 支付金额初始化等于订单金额
         $this->paymentAmount = $this->totalAmount;
+    }
+
+    /**
+     * 订单详情表od_order_items添加
+     *
+     * @throws \Exception
+     */
+    protected function createOrderItemsTable()
+    {
+        // 如果存在折扣金额，每个商品共享该折扣金额
+        $this->sharedDiscountAmount();
+
+        // 订单详情表od_order_items添加
+        $this->orderItemRepo->batchAddRepoList($this->orderItems);
     }
 
     /**
