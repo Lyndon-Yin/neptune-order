@@ -12,9 +12,16 @@ class BaseModel extends \Lyndon\Model\BaseModel
 {
     use SoftDeletes;
 
-    protected $dateFormat = 'Y-m-d H:i:s';
-
-    public $timestamps = false;
-
     protected $guarded = ['id'];
+
+    /**
+     * 重写，使时间格式正确展示
+     *
+     * @param \DateTimeInterface $date
+     * @return string
+     */
+    protected function serializeDate(\DateTimeInterface $date) : string
+    {
+        return $date->format($this->getDateFormat());
+    }
 }
