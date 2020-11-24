@@ -3,13 +3,13 @@ namespace App\Services\Orders\NormalOrder;
 
 
 use App\Traits\Orders\BaseOrderMailingTrait;
-use App\Services\Orders\BaseCore\OrderEditService;
+use App\Services\Orders\BaseCore\OrderUpdateService;
 
 /**
- * Class EditNormalOrderService
+ * Class UpdateNormalOrderService
  * @package App\Services\Orders\NormalOrder
  */
-class EditNormalOrderService extends OrderEditService
+class UpdateNormalOrderService extends OrderUpdateService
 {
     use BaseOrderMailingTrait;
 

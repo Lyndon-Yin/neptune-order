@@ -2,10 +2,10 @@
 namespace App\Services\Orders\BaseCore;
 
 /**
- * Class OrderEditService
+ * Class OrderUpdateService
  * @package App\Services\Orders\BaseCore
  */
-class OrderEditService extends BaseOrderService
+class OrderUpdateService extends BaseOrderService
 {
     /**
      * OrderEditService constructor.
