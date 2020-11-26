@@ -2,6 +2,7 @@
 namespace App\Services\Orders\NormalOrder;
 
 
+use App\Traits\Orders\OrderPaymentTrait;
 use App\Services\Orders\BaseCore\OrderUpdateService;
 use App\Traits\Orders\OrderMailing\UpdateOrderMailingTrait;
 
@@ -11,5 +12,5 @@ use App\Traits\Orders\OrderMailing\UpdateOrderMailingTrait;
  */
 class UpdateNormalOrderService extends OrderUpdateService
 {
-    use UpdateOrderMailingTrait;
+    use UpdateOrderMailingTrait, OrderPaymentTrait;
 }

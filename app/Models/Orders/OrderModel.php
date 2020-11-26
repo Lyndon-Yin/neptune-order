@@ -26,6 +26,12 @@ class OrderModel extends BaseOrderModel
         'order_time'      => 'null',
     ];
 
+    /** 支付类型 **/
+    const PAYMENT_TYPE_ARRAY = [
+        'wx'  => '微信支付',
+        'ali' => '支付宝支付'
+    ];
+
     /** 快递配送类型 **/
     // 无配送类型，默认值
     const DELIVERY_NONE = 0;
@@ -37,6 +43,8 @@ class OrderModel extends BaseOrderModel
     /** 订单状态 **/
     // 未支付
     const ORDER_INIT = 0;
+    // 等待支付完成状态
+    const ORDER_WAIT_PAYED_COMPLETED = 9;
     // 已支付（商家）/待发货（会员）
     const ORDER_PAYED = 20;
     // 已发货（商家）/待收货（会员）
