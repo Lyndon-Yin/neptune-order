@@ -71,19 +71,22 @@ class OrderCreateService extends BaseOrderService
      */
     public function createOrder()
     {
-        // 验证必填参数
-        if (empty($this->buyEntities)) {
+        // 初始化订单ID
+        $this->orderId = order_id();
+
+        // 根据传参实体填充订单详情表
+        $this->fillGoodsInfoForOrderItems();
+        // 验证订单详情不能为空
+        if (empty($this->orderItems)) {
             throw new \Exception('购买的商品不能为空');
         }
 
-        // 初始化订单ID
-        $this->orderId = order_id();
-        // 根据传参实体填充订单详情表
-        $this->fillGoodsInfoForOrderItems();
-
         $this->beforeTransaction();
 
-        $results = DB::transaction(function () {
+        try {
+            // 开启事务
+            DB::beginTransaction();
+
             $results = $this->doTransaction();
 
             // 订单详情表od_order_items添加
@@ -92,8 +95,16 @@ class OrderCreateService extends BaseOrderService
             // 订单主表od_orders添加
             $this->createOrderTable();
 
-            return $results;
-        });
+            // 事务提交
+            DB::commit();
+        } catch (\Exception $e) {
+            // 事务回滚
+            DB::rollBack();
+
+            $this->afterExceptionTransaction();
+
+            throw new \Exception($e->getMessage(), $e->getCode());
+        }
 
         $this->afterTransaction();
 
@@ -118,9 +129,17 @@ class OrderCreateService extends BaseOrderService
     }
 
     /**
-     * @throws \Exception
+     * 事务成功后置操作方法
      */
     protected function afterTransaction()
+    {
+
+    }
+
+    /**
+     * 事务异常后置操作方法
+     */
+    protected function afterExceptionTransaction()
     {
 
     }
@@ -170,6 +189,10 @@ class OrderCreateService extends BaseOrderService
      */
     protected function fillGoodsInfoForOrderItems()
     {
+        if (empty($this->buyEntities)) {
+            return;
+        }
+
         // 获取实体信息
         $entityList = (GoodsAppApi::getInstance())
             ->getEntityByEntityIds($this->merchantId, array_keys($this->buyEntities));
