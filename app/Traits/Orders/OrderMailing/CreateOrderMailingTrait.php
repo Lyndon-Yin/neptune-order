@@ -41,19 +41,6 @@ trait CreateOrderMailingTrait
     }
 
     /**
-     * 添加配送类型，快递/自提等
-     *
-     * @param int $deliveryType
-     * @return $this
-     */
-    public function pushDeliveryType(int $deliveryType)
-    {
-        $this->deliveryType = intval($deliveryType);
-
-        return $this;
-    }
-
-    /**
      * 根据用户地址ID初始化邮寄信息
      * 存在覆盖pushMailingInfo传参的可能
      *
@@ -64,7 +51,7 @@ trait CreateOrderMailingTrait
         if ($this->userAddressId <= 0) {
             return;
         }
-        if ($this->userId <= 0) {
+        if (! isset($this->userId) || $this->userId <= 0) {
             throw new \Exception('用户ID不能为空');
         }
 
@@ -75,9 +62,14 @@ trait CreateOrderMailingTrait
      * 添加od_order_mailing表
      *
      * @throws \Lyndon\Exceptions\ModelException
+     * @throws \Exception
      */
     protected function createOrderMailingTable()
     {
+        if (empty($this->orderId)) {
+            throw new \Exception('订单ID不能为空');
+        }
+
         $temp = [
             'order_id'         => $this->orderId,
             'consignee_name'   => $this->consigneeName,

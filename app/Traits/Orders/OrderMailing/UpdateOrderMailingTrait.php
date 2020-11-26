@@ -22,6 +22,9 @@ trait UpdateOrderMailingTrait
      */
     public function doShipping($shippingNo, $shippingTime = '')
     {
+        if (empty($this->orderId) || ! isset($this->orderStatus)) {
+            throw new \Exception('订单ID，订单状态不能为空');
+        }
         // 验证订单状态，只有已支付可以进行发货
         if ($this->orderStatus != OrderModel::ORDER_PAYED) {
             throw new \Exception('订单状态异常' . $this->orderStatus);

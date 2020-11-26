@@ -84,6 +84,9 @@ trait DetailOrderMailingTrait
      */
     private function initMailingInfo()
     {
+        if (empty($this->orderId)) {
+            return;
+        }
         if ($this->hasQueryMailingTable) {
             return;
         }
