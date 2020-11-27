@@ -48,6 +48,12 @@ trait CreateOrderMailingTrait
      */
     protected function initMailingInfoByUserAddressId()
     {
+        // 验证是否已经初始化过了订单邮寄信息
+        static $hasInitMailingInfo = false;
+        if ($hasInitMailingInfo) {
+            return;
+        }
+
         if ($this->userAddressId <= 0) {
             return;
         }
@@ -56,6 +62,9 @@ trait CreateOrderMailingTrait
         }
 
         // 根据用户地址ID初始化邮寄信息
+
+        // 订单邮寄信息已经初始化完成
+        $hasInitMailingInfo = true;
     }
 
     /**
@@ -69,6 +78,9 @@ trait CreateOrderMailingTrait
         if (empty($this->orderId)) {
             throw new \Exception('订单ID不能为空');
         }
+
+        // 初始化订单邮寄信息
+        $this->initMailingInfoByUserAddressId();
 
         $temp = [
             'order_id'         => $this->orderId,
