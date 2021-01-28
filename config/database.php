@@ -155,6 +155,19 @@ return [
             'database' => env('REDIS_DB', '0'),
         ],
 
+        // 公共redis
+        'publicRedis' => [
+            'url'      => env('REDIS_PUBLIC_URL'),
+            'host'     => env('REDIS_PUBLIC_HOST', '127.0.0.1'),
+            'password' => env('REDIS_PUBLIC_PASSWORD', null),
+            'port'     => env('REDIS_PUBLIC_PORT', '6379'),
+            'database' => env('REDIS_PUBLIC_DB', '1'),
+            'options' => [
+                'cluster' => env('REDIS_CLUSTER', 'redis'),
+                'prefix'  => env('REDIS_PUBLIC_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
+            ],
+        ],
+
         // 缓存服务
         'cache' => [
             'url'      => env('REDIS_CACHE_URL'),
