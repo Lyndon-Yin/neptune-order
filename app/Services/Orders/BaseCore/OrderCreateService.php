@@ -2,7 +2,6 @@
 namespace App\Services\Orders\BaseCore;
 
 
-use App\innerApi\GoodsAppApi;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -39,15 +38,23 @@ class OrderCreateService extends BaseOrderService
             }
 
             $quantity = intval($val['quantity']);
-            $entityId = intval($val['entity_id']);
-            if ($quantity <= 0 || $entityId <= 0) {
+            if ($quantity <= 0) {
                 continue;
             }
+            $entityId = trim($val['entity_id']);
 
             if (isset($this->buyEntities[$entityId])) {
-                $this->buyEntities[$entityId] += $quantity;
+                $tmp = $this->buyEntities[$entityId];
+
+                $this->buyEntities[$entityId] = [
+                    'entity_id' => $entityId,
+                    'quantity'  => $tmp['quantity'] + $quantity
+                ];
             } else {
-                $this->buyEntities[$entityId] = $quantity;
+                $this->buyEntities[$entityId] = [
+                    'entity_id' => $entityId,
+                    'quantity'  => $quantity
+                ];
             }
         }
     }
@@ -194,18 +201,13 @@ class OrderCreateService extends BaseOrderService
         }
 
         // 获取实体信息
-        $entityList = (GoodsAppApi::getInstance())
-            ->getEntityByEntityIds($this->merchantId, array_keys($this->buyEntities));
+        $entityList = $this->getEntityByEntityIds();
         if (empty($entityList)) {
             throw new \Exception('购买的商品不能为空');
         }
 
         foreach ($entityList as $entity) {
-            if (! isset($this->buyEntities[$entity['id']])) {
-                continue;
-            }
-
-            $totalAmount = round($this->buyEntities[$entity['id']] * $entity['sell_price'], 2);
+            $totalAmount = round($entity['quantity'] * $entity['sell_price'], 2);
             $this->orderItems[] = [
                 'order_id'             => $this->orderId,
                 'goods_id'             => $entity['goods_id'],
@@ -214,7 +216,7 @@ class OrderCreateService extends BaseOrderService
                 'entity_img'           => $entity['entity_image'],
                 'entity_price'         => $entity['sell_price'],
                 'entity_spec_value'    => $entity['spec_name_json'],
-                'buy_quantity'         => $this->buyEntities[$entity['id']],
+                'buy_quantity'         => $entity['quantity'],
                 'item_total_amount'    => $totalAmount,
                 'item_discount_amount' => 0,
                 'item_payment_amount'  => $totalAmount
@@ -226,6 +228,24 @@ class OrderCreateService extends BaseOrderService
 
         // 支付金额初始化等于订单金额
         $this->paymentAmount = $this->totalAmount;
+    }
+
+    /**
+     * return [{
+     *    "id",             // 实体ID
+     *    "goods_id",       // 商品ID
+     *    "sell_price",     // 实体价格
+     *    "goods_name",     // 商品名称
+     *    "entity_image",   // 实体图片
+     *    "spec_name_json", // 规格名称
+     *    "quantity",       // 购买数量
+     * }]
+     *
+     * @return array
+     */
+    protected function getEntityByEntityIds()
+    {
+        return [];
     }
 
     /**
