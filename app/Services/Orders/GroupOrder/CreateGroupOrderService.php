@@ -68,6 +68,32 @@ class CreateGroupOrderService extends OrderCreateService
     }
 
     /**
+     * 订单创建具体内容
+     *
+     * @return mixed|null|void
+     * @throws \Lyndon\Exceptions\ModelException
+     * @throws \Exception
+     */
+    protected function doTransaction()
+    {
+        parent::doTransaction();
+
+        // 订单团购分组表od_order_group_buy添加
+        $tmp = [
+            'order_id'         => $this->orderId,
+            'group_id'         => $this->alphaGroup['group_id'],
+            'group_batch_id'   => $this->alphaGroup['batch']['group_batch_id'],
+            'alpha_id'         => $this->alphaId,
+            'alpha_group_id'   => $this->alphaGroupId,
+            'alpha_batch_id'   => $this->alphaBatchId,
+            'alpha_group_name' => $this->alphaGroup['group_name'],
+            'arrival_date'     => $this->alphaGroup['batch']['arrival_date'],
+            'arrival_time'     => $this->alphaGroup['batch']['arrival_time']
+        ];
+        $this->orderGroupBuyRepo->addRepoRow($tmp);
+    }
+
+    /**
      * 获取购买的实体信息
      *
      * @return array
