@@ -241,9 +241,9 @@ class CreateGroupOrderService extends OrderCreateService
     {
         // 远程获取实体信息
         $data = (GoodsAppApi::getInstance())->getEntityByEntityIds(
-            $this->alphaId,
-            $this->alphaGroupId,
-            $this->alphaBatchId,
+            $this->alphaGroup['merchant_id'],
+            $this->alphaGroup['group_id'],
+            $this->alphaGroup['batch']['group_batch_id'],
             array_values($this->buyEntities)
         );
 
