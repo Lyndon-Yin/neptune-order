@@ -16,6 +16,7 @@ class OrderMailingModel extends BaseOrderModel
         'consignee_name'   => 'string',
         'consignee_phone'  => 'string',
         'shipping_address' => 'string',
+        'point'            => 'null',
         'shipping_no'      => 'string',
         'shipping_time'    => 'null',
     ];

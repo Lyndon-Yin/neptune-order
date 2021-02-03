@@ -1,6 +1,9 @@
 <?php
 namespace App\Traits\Orders\OrderMailing;
 
+
+use Illuminate\Support\Facades\DB;
+
 /**
  * Trait CreateOrderMailingTrait
  * @package App\Traits\Orders\OrderMailing
@@ -23,6 +26,8 @@ trait CreateOrderMailingTrait
         $this->consigneeName   = empty($param['consignee_name']) ? '' : trim($param['consignee_name']);
         $this->consigneePhone  = empty($param['consignee_phone']) ? '' : trim($param['consignee_phone']);
         $this->shippingAddress = empty($param['shipping_address']) ? '' : trim($param['shipping_address']);
+        $this->pointLng        = isset($param['point_lng']) ? $param['point_lng'] : null;
+        $this->pointLat        = isset($param['point_lat']) ? $param['point_lat'] : null;
 
         return $this;
     }
@@ -41,33 +46,6 @@ trait CreateOrderMailingTrait
     }
 
     /**
-     * 根据用户地址ID初始化邮寄信息
-     * 存在覆盖pushMailingInfo传参的可能
-     *
-     * @throws \Exception
-     */
-    protected function initMailingInfoByUserAddressId()
-    {
-        // 验证是否已经初始化过了订单邮寄信息
-        static $hasInitMailingInfo = false;
-        if ($hasInitMailingInfo) {
-            return;
-        }
-
-        if ($this->userAddressId <= 0) {
-            return;
-        }
-        if (! isset($this->userId) || $this->userId <= 0) {
-            throw new \Exception('用户ID不能为空');
-        }
-
-        // 根据用户地址ID初始化邮寄信息
-
-        // 订单邮寄信息已经初始化完成
-        $hasInitMailingInfo = true;
-    }
-
-    /**
      * 添加od_order_mailing表
      *
      * @throws \Lyndon\Exceptions\ModelException
@@ -75,19 +53,24 @@ trait CreateOrderMailingTrait
      */
     protected function createOrderMailingTable()
     {
+        // 不存在配送方式，不添加邮寄信息
+        if (empty($this->deliveryType)) {
+            return;
+        }
+
         if (empty($this->orderId)) {
             throw new \Exception('订单ID不能为空');
         }
-
-        // 初始化订单邮寄信息
-        $this->initMailingInfoByUserAddressId();
 
         $temp = [
             'order_id'         => $this->orderId,
             'consignee_name'   => $this->consigneeName,
             'consignee_phone'  => $this->consigneePhone,
-            'shipping_address' => $this->shippingAddress
+            'shipping_address' => $this->shippingAddress,
         ];
+        if (! is_null($this->pointLat) && ! is_null($this->pointLng)) {
+            $temp['point'] = DB::raw("GeomFromText('POINT(" . $this->pointLng . " " . $this->pointLat . ")')");
+        }
 
         $this->orderMailRepo->addRepoRow($temp);
     }

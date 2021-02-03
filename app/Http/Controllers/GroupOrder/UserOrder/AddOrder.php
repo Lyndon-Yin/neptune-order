@@ -19,7 +19,8 @@ class AddOrder extends BaseOrderAction
 
     public function onRun(Request $request)
     {
-        $param = $request->only('user_id', 'alpha_id', 'alpha_group_id', 'alpha_batch_id', 'buy_entities');
+        $param = $request->only('user_id', 'alpha_id', 'alpha_group_id', 'alpha_batch_id', 'buy_entities', 'delivery_type',
+            'user_address_id');
 
         try {
             (new GroupOrderFacade())->createGroupOrder($param);

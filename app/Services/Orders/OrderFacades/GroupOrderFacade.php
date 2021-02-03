@@ -47,6 +47,18 @@ class GroupOrderFacade
             $param['user_id'],
             $param['buy_entities']
         );
+
+        // 推入配送方式和邮寄地址
+        if (empty($param['user_address_id'])) {
+            $userAddressId = 0;
+        } else {
+            $userAddressId = hash_ids_decode($param['user_address_id']);
+            if (empty($userAddressId)) {
+                throw new \Exception('未识别用户收获地址ID');
+            }
+        }
+        $orderObj->pushDeliveryType($param['delivery_type'])->pushUserAddressId($userAddressId);
+
         $orderObj->createOrder();
     }
 }

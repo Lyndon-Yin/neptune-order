@@ -53,4 +53,19 @@ trait BaseOrderMailingTrait
     {
         return $this->shippingTime;
     }
+
+    // 地址经纬度
+    protected $pointLng = null;
+
+    public function getPointLng()
+    {
+        return $this->pointLng;
+    }
+
+    protected $pointLat = null;
+
+    public function getPointLat()
+    {
+        return $this->pointLat;
+    }
 }

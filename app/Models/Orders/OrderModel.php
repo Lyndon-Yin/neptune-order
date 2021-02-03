@@ -39,6 +39,8 @@ class OrderModel extends BaseOrderModel
     const DELIVERY_MAILING = 1;
     // 自提点自提
     const DELIVERY_FETCH = 2;
+    // 快递到自提点，配送到家
+    const DELIVERY_FETCH_HOME = 3;
 
     /** 订单状态 **/
     // 未支付

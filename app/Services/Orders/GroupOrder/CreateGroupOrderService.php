@@ -3,7 +3,10 @@ namespace App\Services\Orders\GroupOrder;
 
 
 use App\innerApi\GoodsAppApi;
+use App\innerApi\MemberAppApi;
+use App\Models\Orders\OrderModel;
 use App\Services\Orders\BaseCore\OrderCreateService;
+use App\Traits\Orders\OrderMailing\CreateOrderMailingTrait;
 
 /**
  * Class CreateGroupOrderService
@@ -11,6 +14,8 @@ use App\Services\Orders\BaseCore\OrderCreateService;
  */
 class CreateGroupOrderService extends OrderCreateService
 {
+    use CreateOrderMailingTrait;
+
     /**
      * @var int 团长ID
      */
@@ -68,6 +73,17 @@ class CreateGroupOrderService extends OrderCreateService
     }
 
     /**
+     * @throws \Exception
+     */
+    protected function beforeTransaction()
+    {
+        parent::beforeTransaction();
+
+        // 验证配送方式
+        $this->parseDeliveryType();
+    }
+
+    /**
      * 订单创建具体内容
      *
      * @return mixed|null|void
@@ -91,6 +107,117 @@ class CreateGroupOrderService extends OrderCreateService
             'arrival_time'     => $this->alphaGroup['batch']['arrival_time']
         ];
         $this->orderGroupBuyRepo->addRepoRow($tmp);
+
+        // 添加邮寄信息od_order_mailing
+        $this->createOrderMailingTable();
+    }
+
+    /**
+     * 解析配送类型，并进行参数验证
+     *
+     * @throws \Exception
+     */
+    protected function parseDeliveryType()
+    {
+        switch ($this->deliveryType) {
+            case OrderModel::DELIVERY_MAILING:
+                // 快递到家，验证团购是否支持快递到家
+                if ($this->alphaGroup['delivery_type'] != 1) {
+                    throw new \Exception('该团购不支持快递到家');
+                }
+
+                // 推入邮寄地址
+                $tmp = $this->getUserAddressInfo();
+                $this->pushMailingInfo($tmp);
+
+                break;
+            case OrderModel::DELIVERY_FETCH:
+                // 快递到自提点，验证团购是否支持快递到自提点
+                if ($this->alphaGroup['delivery_type'] != 2) {
+                    throw new \Exception('该团购不支持站点自提');
+                }
+                if (empty($this->alphaGroup['position'])) {
+                    throw new \Exception('团购异常，该团购无自提地址');
+                }
+
+                // 推入邮寄地址
+                $pos = $this->alphaGroup['position'];
+                $tmp = [
+                    'consignee_name'   => $pos['pickup_name'],
+                    'consignee_phone'  => $pos['pickup_mobile'],
+                    'shipping_address' => $pos['pickup_address'],
+                    'point_lng'        => $pos['lng'],
+                    'point_lat'        => $pos['lat']
+                ];
+                $this->pushMailingInfo($tmp);
+
+                break;
+            case OrderModel::DELIVERY_FETCH_HOME:
+                // 快递到自提点，然后团长配送到家
+                if ($this->alphaGroup['delivery_type'] != 2) {
+                    throw new \Exception('该团购不支持团长配送到家');
+                }
+                if (empty($this->alphaGroup['position'])) {
+                    throw new \Exception('团购异常，该团购无自提地址');
+                }
+
+                $pos = $this->alphaGroup['position'];
+                if ($pos['delivery_home'] != 'yes') {
+                    throw new \Exception('该团购无团长配送到家服务');
+                }
+
+                // 验证是否在配送范围内
+                $tmp = $this->getUserAddressInfo();
+                $distance = distance($pos['lng'], $pos['lat'], $tmp['point_lng'], $tmp['point_lat']);
+                if ($distance > $pos['radius']) {
+                    throw new \Exception('超过配送范围，无法配送到家');
+                }
+
+                // 推入邮寄地址
+                $tmp = [
+                    'consignee_name'   => $pos['pickup_name'],
+                    'consignee_phone'  => $pos['pickup_mobile'],
+                    'shipping_address' => $pos['pickup_address'],
+                    'point_lng'        => $pos['lng'],
+                    'point_lat'        => $pos['lat']
+                ];
+                $this->pushMailingInfo($tmp);
+
+                break;
+            default:
+                throw new \Exception('未识别订单配送方式');
+        }
+    }
+
+    /**
+     * 获取用户邮寄地址
+     *
+     * @return array
+     * @throws \Exception
+     */
+    protected function getUserAddressInfo()
+    {
+        static $address = [];
+        if (! empty($address)) {
+            return $address;
+        }
+
+        $data = (MemberAppApi::getInstance())->getUserAddressInfo(
+            $this->userId,
+            $this->userAddressId
+        );
+        if (empty($data)) {
+            throw new \Exception('未识别用户收获地址ID');
+        }
+
+        $address = [
+            'consignee_name'   => $data['username'],
+            'consignee_phone'  => $data['mobile'],
+            'shipping_address' => $data['detail_address'],
+            'point_lng'        => $data['lng'],
+            'point_lat'        => $data['lat']
+        ];
+        return $address;
     }
 
     /**
