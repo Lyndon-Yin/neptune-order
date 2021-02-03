@@ -5,6 +5,7 @@ namespace App\Services\Orders\GroupOrder;
 use App\innerApi\GoodsAppApi;
 use App\innerApi\MemberAppApi;
 use App\Models\Orders\OrderModel;
+use Illuminate\Support\Facades\DB;
 use App\Services\Orders\BaseCore\OrderCreateService;
 use App\Traits\Orders\OrderMailing\CreateOrderMailingTrait;
 
@@ -110,6 +111,16 @@ class CreateGroupOrderService extends OrderCreateService
 
         // 添加邮寄信息od_order_mailing
         $this->createOrderMailingTable();
+
+        // od_order_mailing_home表添加
+        if ($this->deliveryType == OrderModel::DELIVERY_FETCH_HOME) {
+            $tmp = $this->getUserAddressInfo();
+
+            $tmp['order_id'] = $this->orderId;
+            $tmp['point']    = DB::raw("GeomFromText('POINT(" . $tmp['point_lng']. " " . $tmp['point_lat'] . ")')");
+
+            $this->orderMailHomeRepo->addRepoRow($tmp);
+        }
     }
 
     /**
