@@ -11,7 +11,10 @@ use App\Services\Orders\GroupOrder\CreateGroupOrderService;
 class GroupOrderFacade
 {
     /**
+     * 订单创建
+     *
      * @param array $param
+     * @return array
      * @throws \Exception
      */
     public function createGroupOrder(array $param)
@@ -59,6 +62,9 @@ class GroupOrderFacade
         }
         $orderObj->pushDeliveryType($param['delivery_type'])->pushUserAddressId($userAddressId);
 
+        // 订单创建
         $orderObj->createOrder();
+
+        return ['order_id' => $orderObj->getOrderId()];
     }
 }

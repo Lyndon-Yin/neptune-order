@@ -59,14 +59,16 @@ class AddOrder extends BaseOrderAction
      * @apiSuccess {Boolean} status 状态码true
      * @apiSuccess {Number} code 具体状态码200等
      * @apiSuccess {String} message 状态信息提示
-     * @apiSuccess {Array} data 返回结果集
+     * @apiSuccess {Object} data 返回结果集
      *
      * @apiSuccessExample Success-Response:
      * {
      *    "status": true,
      *    "code": 200,
      *    "message": "success",
-     *    "data": []
+     *    "data": {
+     *       "order_id": "42803038322163712"
+     *    }
      * }
      *
      * @apiUse ErrorReturn
@@ -85,11 +87,11 @@ class AddOrder extends BaseOrderAction
         }
 
         try {
-            (new GroupOrderFacade())->createGroupOrder($param);
+            $result = (new GroupOrderFacade())->createGroupOrder($param);
         } catch (\Exception $e) {
             return error_return($e->getMessage());
         }
 
-        return success_return('success', 200);
+        return success_return('success', 200, $result);
     }
 }

@@ -94,13 +94,13 @@ class OrderCreateService extends BaseOrderService
             // 开启事务
             DB::beginTransaction();
 
-            $results = $this->doTransaction();
-
             // 订单详情表od_order_items添加
             $this->createOrderItemsTable();
 
             // 订单主表od_orders添加
             $this->createOrderTable();
+
+            $results = $this->doTransaction();
 
             // 事务提交
             DB::commit();

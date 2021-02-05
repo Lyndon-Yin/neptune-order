@@ -121,6 +121,22 @@ class CreateGroupOrderService extends OrderCreateService
 
             $this->orderMailHomeRepo->addRepoRow($tmp);
         }
+
+        /** 注意：商品扣除库存需要放在最后。否则存在库存扣除成功，订单创建失败的可能 **/
+        // 不用$this->buyEntities数据，是因为该数据为原始传参数据，正确性未验证
+        $tmp = array_map(function ($val) {
+            return [
+                'entity_id' => $val['entity_id'],
+                'quantity'  => $val['buy_quantity']
+            ];
+        }, $this->orderItems);
+        (GoodsAppApi::getInstance())->orderConsumeStock(
+            $this->alphaGroup['merchant_id'],
+            $this->alphaGroup['group_id'],
+            $this->alphaGroup['batch']['group_batch_id'],
+            $tmp,
+            $this->orderId
+        );
     }
 
     /**

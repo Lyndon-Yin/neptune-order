@@ -44,22 +44,84 @@ class GoodsAppApi extends BaseAppApi
     /**
      * 根据商品实体ID获取实体信息
      *
-     * @param int $merchant_id  商家ID
+     * @param int $merchantId   商家ID
      * @param int $groupId      团购模板ID
      * @param int $groupBatchId 团购模板批次ID
      * @param array $entities   购买的实体列表
      * @return array
      * @throws \Exception
      */
-    public function getEntityByEntityIds($merchant_id, $groupId, $groupBatchId, array $entities)
+    public function getEntityByEntityIds($merchantId, $groupId, $groupBatchId, array $entities)
     {
         $results = $this->post(
             'response-api/order-api/group-entity-list',
             [
-                'merchant_id'    => $merchant_id,
+                'merchant_id'    => $merchantId,
                 'group_id'       => $groupId,
                 'group_batch_id' => $groupBatchId,
                 'entities'       => $entities
+            ]
+        );
+
+        if (! $results['status']) {
+            throw new \Exception($results['message'], $results['code']);
+        }
+
+        return $results['data'];
+    }
+
+    /**
+     * 订单扣库存
+     *
+     * @param int $merchantId   商家ID
+     * @param int $groupId      团购模板ID
+     * @param int $groupBatchId 团购模板批次ID
+     * @param array $entities   购买的实体列表
+     * @param string $orderId   订单ID
+     * @return array
+     * @throws \Exception
+     */
+    public function orderConsumeStock($merchantId, $groupId, $groupBatchId, array $entities, $orderId)
+    {
+        $results = $this->post(
+            'response-api/order-api/order-consume-stock',
+            [
+                'merchant_id'    => $merchantId,
+                'group_id'       => $groupId,
+                'group_batch_id' => $groupBatchId,
+                'entities'       => $entities,
+                'order_id'       => $orderId
+            ]
+        );
+
+        if (! $results['status']) {
+            throw new \Exception($results['message'], $results['code']);
+        }
+
+        return $results['data'];
+    }
+
+    /**
+     * 订单返还库存
+     *
+     * @param int $merchantId   商家ID
+     * @param int $groupId      团购模板ID
+     * @param int $groupBatchId 团购模板批次ID
+     * @param array $entities   购买的实体列表
+     * @param string $orderId   订单ID
+     * @return array
+     * @throws \Exception
+     */
+    public function orderReturnStock($merchantId, $groupId, $groupBatchId, array $entities, $orderId)
+    {
+        $results = $this->post(
+            'response-api/order-api/order-return-stock',
+            [
+                'merchant_id'    => $merchantId,
+                'group_id'       => $groupId,
+                'group_batch_id' => $groupBatchId,
+                'entities'       => $entities,
+                'order_id'       => $orderId
             ]
         );
 
