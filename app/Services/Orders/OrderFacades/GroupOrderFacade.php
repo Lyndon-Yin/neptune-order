@@ -3,6 +3,7 @@ namespace App\Services\Orders\OrderFacades;
 
 
 use App\Services\Orders\GroupOrder\CreateGroupOrderService;
+use App\Services\Orders\GroupOrder\UpdateGroupOrderService;
 
 /**
  * Class GroupOrderFacade
@@ -66,5 +67,20 @@ class GroupOrderFacade
         $orderObj->createOrder();
 
         return ['order_id' => $orderObj->getOrderId()];
+    }
+
+    /**
+     * 订单支付
+     *
+     * @param $param
+     * @return mixed
+     * @throws \Exception
+     */
+    public function payGroupOrder($param)
+    {
+        $orderObj = new UpdateGroupOrderService($param['order_id']);
+
+        // 创建支付信息
+        return $orderObj->pushPaymentType('wx')->doPay();
     }
 }

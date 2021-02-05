@@ -39,9 +39,14 @@ trait OrderPaymentTrait
      *
      * @param string $paymentType
      * @return $this
+     * @throws \Exception
      */
     public function pushPaymentType(string $paymentType)
     {
+        if (! isset(OrderModel::PAYMENT_TYPE_ARRAY[$paymentType])) {
+            throw new \Exception('未识别支付类型');
+        }
+
         $this->paymentType = $paymentType;
         return $this;
     }
@@ -165,15 +170,12 @@ trait OrderPaymentTrait
         if (empty($this->orderId)) {
             throw new \Exception('订单ID不能为空');
         }
-        if (! isset($this->orderStatus)) {
-            throw new \Exception('订单状态不能为空');
-        }
         if (empty($this->paymentAmount)) {
             throw new \Exception('支付金额不能小于等于0');
         }
 
         // 验证订单状态
-        if ($this->orderStatus != OrderModel::ORDER_INIT) {
+        if (! in_array($this->orderStatus, [OrderModel::ORDER_INIT, OrderModel::ORDER_WAIT_PAYED_COMPLETED])) {
             throw new \Exception('订单状态异常' . $this->orderStatus);
         }
 
