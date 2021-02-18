@@ -2,8 +2,9 @@
 namespace App\Http\Controllers\PayNotify\GroupOrder;
 
 
-use App\Http\Controllers\BaseAction;
 use Illuminate\Http\Request;
+use App\Http\Controllers\BaseAction;
+use App\Services\Orders\GroupOrder\UpdateGroupOrderService;
 
 /**
  * Class WxPayNotify
@@ -18,6 +19,14 @@ class WxPayNotify extends BaseAction
 
     public function onRun(Request $request)
     {
-        return true;
+        $param = $request->only('order_id');
+
+        try {
+            (new UpdateGroupOrderService($param['order_id']))->payComplete();
+        } catch (\Exception $e) {
+            return error_return($e->getMessage());
+        }
+
+        return success_return('success');
     }
 }

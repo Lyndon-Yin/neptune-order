@@ -17,6 +17,5 @@ class OrderPaymentModel extends BaseOrderModel
         'payment_type_amount'    => 'float',
         'account_balance_amount' => 'float',
         'payment_time'           => 'null',
-        'payment_no'             => 'string',
     ];
 }

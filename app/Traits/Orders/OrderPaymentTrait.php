@@ -124,15 +124,13 @@ trait OrderPaymentTrait
 
         // 验证是否已经存在支付信息
         try {
-            $info = $this->orderPayRepo->getRepoRowByPrimaryKey($this->orderId);
-
             DB::beginTransaction();
 
             // od_orders状态改变
             $this->orderRepo->editRepoRow($this->orderId, ['order_status' => OrderModel::ORDER_WAIT_PAYED_COMPLETED]);
 
             // od_order_payment表创建或者更新
-            if (empty($info)) {
+            if (! $this->orderPayRepo->existsRepoRowByPrimaryKey($this->orderId)) {
                 $temp = [
                     'order_id' => $this->orderId,
                     'payment_type' => $this->paymentType,
@@ -158,6 +156,44 @@ trait OrderPaymentTrait
         }
 
         $this->orderStatus = OrderModel::ORDER_WAIT_PAYED_COMPLETED;
+    }
+
+    /**
+     * 支付完成
+     *
+     * @throws \Exception
+     */
+    protected function payComplete()
+    {
+        if (empty($this->orderId)) {
+            throw new \Exception('订单ID不能为空');
+        }
+        // 验证订单状态
+        if ($this->orderStatus != OrderModel::ORDER_WAIT_PAYED_COMPLETED) {
+            throw new \Exception('订单状态异常' . $this->orderStatus);
+        }
+        // 验证订单支付信息存在性
+        if (! $this->orderPayRepo->existsRepoRowByPrimaryKey($this->orderId)) {
+            throw new \Exception('订单异常，未识别支付信息');
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // od_orders状态改变
+            $this->orderRepo->editRepoRow($this->orderId, ['order_status' => OrderModel::ORDER_PAYED]);
+
+            // od_order_payment表更新
+            $this->orderPayRepo->editRepoRow($this->orderId, ['payment_time' => date('Y-m-d H:i:s')]);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            throw new \Exception($e->getMessage(), $e->getCode());
+        }
+
+        $this->orderStatus = OrderModel::ORDER_PAYED;
     }
 
     /**
