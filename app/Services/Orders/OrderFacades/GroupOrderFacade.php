@@ -127,4 +127,26 @@ class GroupOrderFacade
 
         $orderObj->pushOrderRemark('商家取消')->cancelOrder();
     }
+
+    /**
+     * 订单核销（确认收货）
+     *
+     * @param $param
+     * @throws \Lyndon\Exceptions\ModelException
+     * @throws \Exception
+     */
+    public function groupOrderVerification($param)
+    {
+        $userId = hash_ids_decode($param['user_id']);
+        if (empty($userId)) {
+            throw new \Exception('未识别用户ID');
+        }
+
+        $orderObj = new UpdateGroupOrderService($param['order_id']);
+        if ($orderObj->getUserId() != $userId) {
+            throw new \Exception('未识别该订单ID');
+        }
+
+        $orderObj->orderVerification();
+    }
 }

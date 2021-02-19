@@ -15,7 +15,7 @@ class BaseOrderService extends BaseService
 
     /** 订单主表od_orders字段 **/
     // 订单ID
-    protected $orderId = '';
+    protected $orderId = 0;
 
     public function getOrderId()
     {

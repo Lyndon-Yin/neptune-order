@@ -111,4 +111,25 @@ class UpdateGroupOrderService extends OrderUpdateService
 
         $this->orderStatus = OrderModel::ORDER_NO_PAY_CANCEL;
     }
+
+    /**
+     * 订单核销（确认收货）
+     *
+     * @throws \Lyndon\Exceptions\ModelException
+     * @throws \Exception
+     */
+    public function orderVerification()
+    {
+        // 只有已支付订单可以核销
+        if ($this->orderStatus != OrderModel::ORDER_PAYED) {
+            throw new \Exception('订单状态异常' . $this->orderStatus);
+        }
+
+        $this->orderRepo->editRepoRow(
+            $this->orderId,
+            ['order_status' => OrderModel::ORDER_GET]
+        );
+
+        $this->orderStatus = OrderModel::ORDER_GET;
+    }
 }

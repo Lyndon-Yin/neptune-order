@@ -14,7 +14,7 @@ class OrderDetailService extends BaseOrderService
      */
     public function __construct($orderId)
     {
-        $this->orderId = $orderId;
+        $this->orderId = intval($orderId);
 
         $this->initOrderInfo();
     }
@@ -25,7 +25,7 @@ class OrderDetailService extends BaseOrderService
     protected function initOrderInfo()
     {
         // 获取订单主表信息
-        $info = $this->orderRepo->getRepoRowByPrimaryKey(intval($this->orderId));
+        $info = $this->orderRepo->getRepoRowByPrimaryKey($this->orderId);
         if (empty($info)) {
             throw new \Exception('未识别订单信息');
         }

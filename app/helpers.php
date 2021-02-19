@@ -11,7 +11,7 @@ if (! function_exists('order_id')) {
      */
     function order_id()
     {
-        return app(Snowflake::class)->nextId();
+        return intval(app(Snowflake::class)->nextId());
     }
 }
 
