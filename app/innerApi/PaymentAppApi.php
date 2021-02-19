@@ -2,6 +2,7 @@
 namespace App\innerApi;
 
 
+use Lyndon\Logger\Log;
 use Lyndon\Traits\Singleton;
 
 /**
@@ -27,18 +28,17 @@ class PaymentAppApi extends BaseAppApi
      */
     public function wxPay($userId, $merchantId, $tradeNo, $totalFee, $notifyUrl)
     {
-        $results = $this->post(
-            'payment/wechat-pay/pay',
-            [
-                'user_id'     => $userId,
-                'merchant_id' => $merchantId,
-                'trade_no'    => $tradeNo,
-                'total_fee'   => $totalFee,
-                'notify_url'  => $notifyUrl
-            ]
-        );
+        $param = [
+            'user_id'     => $userId,
+            'merchant_id' => $merchantId,
+            'trade_no'    => $tradeNo,
+            'total_fee'   => $totalFee,
+            'notify_url'  => $notifyUrl
+        ];
+        $results = $this->post('payment/wechat-pay/pay', $param);
 
         if (! $results['status']) {
+            Log::filename('PaymentAppApi')->error('PaymentAppApi@wxPay', compact('param', 'results'));
             throw new \Exception($results['message'], $results['code']);
         }
 

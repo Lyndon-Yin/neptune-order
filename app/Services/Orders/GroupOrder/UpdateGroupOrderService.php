@@ -30,17 +30,31 @@ class UpdateGroupOrderService extends OrderUpdateService
         // 生成支付信息
         $this->traitDoPay();
 
-        // 调起支付
-        if ($this->paymentType == 'wx') {
-            $result = (PaymentAppApi::getInstance())->wxPay(
-                $this->userId,
-                $this->merchantId,
-                $this->orderId,
-                $this->totalAmount,
-                'pay-notify/group-order/wx-pay-notify'
-            );
-        } else {
-            throw new \Exception('暂不支持该支付类型');
+        // 不用进行三方支付，直接支付完成
+        if ($this->paymentTypeAmount < 0.01) {
+            $this->payComplete();
+
+            return ['pay_complete' => 1];
+        }
+
+        // 调起三方支付
+        try {
+            if ($this->paymentType == 'wx') {
+                $result = (PaymentAppApi::getInstance())->wxPay(
+                    $this->userId,
+                    $this->merchantId,
+                    $this->orderId,
+                    $this->totalAmount,
+                    'pay-notify/group-order/wx-pay-notify'
+                );
+            } else {
+                throw new \Exception('暂不支持该支付类型');
+            }
+        } catch (\Exception $e) {
+            // 调起支付异常，将订单状态回退
+            $this->rollbackDoPay();
+
+            throw $e;
         }
 
         return $result;

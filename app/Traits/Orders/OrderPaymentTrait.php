@@ -159,6 +159,22 @@ trait OrderPaymentTrait
     }
 
     /**
+     * 支付中断，回退支付状态
+     *
+     * @throws \Lyndon\Exceptions\ModelException
+     */
+    protected function rollbackDoPay()
+    {
+        // od_orders状态改变
+        $this->orderRepo->editRepoRow($this->orderId, ['order_status' => OrderModel::ORDER_INIT]);
+
+        // 释放锁定的余额额度
+        $this->unlockAccountBalanceAmount();
+
+        $this->orderStatus = OrderModel::ORDER_INIT;
+    }
+
+    /**
      * 支付完成
      *
      * @throws \Exception
@@ -173,9 +189,13 @@ trait OrderPaymentTrait
             throw new \Exception('订单状态异常' . $this->orderStatus);
         }
         // 验证订单支付信息存在性
-        if (! $this->orderPayRepo->existsRepoRowByPrimaryKey($this->orderId)) {
+        $info = $this->orderPayRepo->getRepoRowByPrimaryKey($this->orderId);
+        if (empty($info)) {
             throw new \Exception('订单异常，未识别支付信息');
         }
+        $this->paymentType          = $info['payment_type'];
+        $this->paymentTypeAmount    = $info['payment_type_amount'];
+        $this->accountBalanceAmount = $info['account_balance_amount'];
 
         try {
             DB::beginTransaction();
@@ -185,6 +205,8 @@ trait OrderPaymentTrait
 
             // od_order_payment表更新
             $this->orderPayRepo->editRepoRow($this->orderId, ['payment_time' => date('Y-m-d H:i:s')]);
+
+            // 账户余额扣除
 
             DB::commit();
         } catch (\Exception $e) {
