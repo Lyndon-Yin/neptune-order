@@ -102,6 +102,14 @@ class BaseOrderService extends BaseService
         return $this->orderStatus;
     }
 
+    // 订单备注
+    protected $orderRemark = '';
+
+    public function getOrderRemark()
+    {
+        return $this->orderRemark;
+    }
+
     // 订单完成时间
     protected $orderTime = null;
 

@@ -285,6 +285,7 @@ class OrderCreateService extends BaseOrderService
             'payment_amount'  => $this->paymentAmount,
             'delivery_type'   => $this->deliveryType,
             'order_status'    => $this->orderStatus,
+            'order_remark'    => $this->orderRemark,
             'order_time'      => $this->orderTime
         ];
 

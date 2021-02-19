@@ -12,6 +12,8 @@ class GroupOrderValidator extends BaseValidator
 {
     const RULE_COMMON = 'rule_common';
 
+    const RULE_ID = 'rule_id';
+
     /**
      * 验证规则
      *
@@ -28,6 +30,9 @@ class GroupOrderValidator extends BaseValidator
             'buy_entities.*.entity_id' => 'required',
             'buy_entities.*.quantity'  => 'required|integer|min:1',
         ],
+        self::RULE_ID => [
+            'order_id' => 'required',
+        ]
     ];
 
     /**
@@ -36,6 +41,7 @@ class GroupOrderValidator extends BaseValidator
      * @var array
      */
     protected $message = [
+        'order_id.required'       => '订单ID不能为空',
         'user_id.required'        => '用户ID不能为空',
         'alpha_id.required'       => '团长不能为空',
         'alpha_group_id.required' => '团长开团ID不能为空',

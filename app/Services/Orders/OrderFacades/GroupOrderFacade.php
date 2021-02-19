@@ -83,4 +83,48 @@ class GroupOrderFacade
         // 创建支付信息
         return $orderObj->pushPaymentType('wx')->doPay();
     }
+
+    /**
+     * 用户取消未支付订单
+     *
+     * @param $param
+     * @throws \Lyndon\Exceptions\ModelException
+     * @throws \Exception
+     */
+    public function groupOrderCancelByUser($param)
+    {
+        $userId = hash_ids_decode($param['user_id']);
+        if (empty($userId)) {
+            throw new \Exception('未识别用户ID');
+        }
+
+        $orderObj = new UpdateGroupOrderService($param['order_id']);
+        if ($orderObj->getUserId() != $userId) {
+            throw new \Exception('未识别该订单ID');
+        }
+
+        $orderObj->pushOrderRemark('用户取消')->cancelOrder();
+    }
+
+    /**
+     * 商家取消未支付订单
+     *
+     * @param $param
+     * @throws \Lyndon\Exceptions\ModelException
+     * @throws \Exception
+     */
+    public function groupOrderCancelByMerchant($param)
+    {
+        $merchantId = hash_ids_decode($param['merchant_id']);
+        if (empty($merchantId)) {
+            throw new \Exception('未识别商家ID');
+        }
+
+        $orderObj = new UpdateGroupOrderService($param['order_id']);
+        if ($orderObj->getMerchantId() != $merchantId) {
+            throw new \Exception('未识别该订单ID');
+        }
+
+        $orderObj->pushOrderRemark('商家取消')->cancelOrder();
+    }
 }

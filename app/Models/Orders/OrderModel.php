@@ -23,6 +23,7 @@ class OrderModel extends BaseOrderModel
         'payment_amount'  => 'float',
         'delivery_type'   => 'int',
         'order_status'    => 'int',
+        'order_remark'    => 'string',
         'order_time'      => 'null',
     ];
 

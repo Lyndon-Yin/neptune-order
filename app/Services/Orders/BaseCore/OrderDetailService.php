@@ -40,6 +40,7 @@ class OrderDetailService extends BaseOrderService
         $this->paymentAmount  = $info['payment_amount'];
         $this->deliveryType   = $info['delivery_type'];
         $this->orderStatus    = $info['order_status'];
+        $this->orderRemark    = $info['order_remark'];
         $this->orderTime      = $info['order_time'];
         $this->createdAt      = $info['created_at'];
     }
