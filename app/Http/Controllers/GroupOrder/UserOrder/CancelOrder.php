@@ -9,10 +9,10 @@ use App\Http\Controllers\GroupOrder\BaseOrderAction;
 use App\Services\Orders\OrderFacades\GroupOrderFacade;
 
 /**
- * Class UserCancelOrder
+ * Class CancelOrder
  * @package App\Http\Controllers\GroupOrder\UserOrder
  */
-class UserCancelOrder extends BaseOrderAction
+class CancelOrder extends BaseOrderAction
 {
     public function allowMethod()
     {
@@ -20,12 +20,12 @@ class UserCancelOrder extends BaseOrderAction
     }
 
     /**
-     * @api {post} /group-order/user-order/user-cancel-order
+     * @api {post} /group-order/user-order/cancel-order
      *
      * @apiVersion 1.0.0
-     * @apiGroup 团购订单
+     * @apiGroup 用户团购订单
      *
-     * @apiName UserOrder/UserCancelOrder
+     * @apiName UserOrder/CancelOrder
      * @apiDeprecated 用户取消团购订单
      *
      * @apiParam {String} order_id 订单ID

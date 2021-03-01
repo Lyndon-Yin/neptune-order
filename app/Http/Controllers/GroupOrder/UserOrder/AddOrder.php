@@ -20,10 +20,10 @@ class AddOrder extends BaseOrderAction
     }
 
     /**
-     * @api {post} /group-order/user-order/order-add
+     * @api {post} /group-order/user-order/add-order
      *
      * @apiVersion 1.0.0
-     * @apiGroup 团购订单
+     * @apiGroup 用户团购订单
      *
      * @apiName UserOrder/AddOrder
      * @apiDeprecated 团购订单添加

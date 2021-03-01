@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\GroupOrder\UserOrder;
+namespace App\Http\Controllers\GroupOrder\MerchantOrder;
 
 
 use Illuminate\Http\Request;
@@ -9,10 +9,10 @@ use App\Http\Controllers\GroupOrder\BaseOrderAction;
 use App\Services\Orders\OrderFacades\GroupOrderFacade;
 
 /**
- * Class MerchantCancelOrder
- * @package App\Http\Controllers\GroupOrder\UserOrder
+ * Class CancelOrder
+ * @package App\Http\Controllers\GroupOrder\MerchantOrder
  */
-class MerchantCancelOrder extends BaseOrderAction
+class CancelOrder extends BaseOrderAction
 {
     public function allowMethod()
     {
@@ -20,12 +20,12 @@ class MerchantCancelOrder extends BaseOrderAction
     }
 
     /**
-     * @api {post} /group-order/user-order/merchant-cancel-order
+     * @api {post} /group-order/merchant-order/cancel-order
      *
      * @apiVersion 1.0.0
-     * @apiGroup 团购订单
+     * @apiGroup 商家团购订单
      *
-     * @apiName UserOrder/MerchantCancelOrder
+     * @apiName MerchantOrder/CancelOrder
      * @apiDeprecated 商家取消团购订单
      *
      * @apiParam {String} order_id 订单ID

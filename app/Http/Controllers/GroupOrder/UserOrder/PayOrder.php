@@ -23,7 +23,7 @@ class PayOrder extends BaseOrderAction
      * @api {post} /group-order/user-order/pay-order
      *
      * @apiVersion 1.0.0
-     * @apiGroup 团购订单
+     * @apiGroup 用户团购订单
      *
      * @apiName UserOrder/PayOrder
      * @apiDeprecated 团购订单支付
