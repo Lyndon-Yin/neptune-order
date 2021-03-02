@@ -15,6 +15,25 @@ if (! function_exists('order_id')) {
     }
 }
 
+if (! function_exists('get_page_size')) {
+    /**
+     * 解析用户page_size传参
+     *
+     * @param array $param
+     * @param null $default
+     * @return int|null
+     */
+    function get_page_size($param = [], $default = null)
+    {
+        if (empty($param['page_size'])) {
+            return $default;
+        }
+
+        $pageSize = intval($param['page_size']);
+
+        return $pageSize > 0 ? $pageSize : $default;
+    }
+}
 
 if (! function_exists('is_mobile')) {
     /**

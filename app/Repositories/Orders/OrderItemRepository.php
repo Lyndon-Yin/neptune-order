@@ -18,6 +18,22 @@ class OrderItemRepository extends BaseOrderRepository
     /**
      * 根据订单ID查询订单详情
      *
+     * @param array $orderIds
+     * @return mixed
+     */
+    public function getOrderItemsByOrderIds($orderIds)
+    {
+        $results = $this->model
+            ->whereIn('order_id', $orderIds)
+            ->orderBy('id', 'asc')
+            ->get()->toArray();
+
+        return array_group($results, 'order_id');
+    }
+
+    /**
+     * 根据订单ID查询订单详情
+     *
      * @param $orderId
      * @return mixed
      */
