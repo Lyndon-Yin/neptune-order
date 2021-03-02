@@ -48,9 +48,19 @@ class GroupOrderListService extends BaseService
         // od_order_items表查询
         $orderItems = $this->orderItemRepo->getOrderItemsByOrderIds($orderIds);
 
+        // od_order_mailing表查询
+        $orderMailing = $this->orderMailRepo->getRepoListByPrimaryKeys($orderIds);
+        $orderMailing = array_column($orderMailing, null, 'order_id');
+
+        // od_order_mailing_home表查询
+        $orderMailingHome = $this->orderMailHomeRepo->getRepoListByPrimaryKeys($orderIds);
+        $orderMailingHome = array_column($orderMailingHome, null, 'order_id');
+
         // 数据合并
         foreach ($result['data'] as &$val) {
             $val['order_items'] = isset($orderItems[$val['id']]) ? $orderItems[$val['id']] : [];
+            $val['order_mailing'] = isset($orderMailing[$val['id']]) ? $orderMailing[$val['id']] : [];
+            $val['order_mailing_home'] = isset($orderMailingHome[$val['id']]) ? $orderMailingHome[$val['id']] : [];
         }
         unset($val, $orderItems);
 

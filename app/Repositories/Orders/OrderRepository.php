@@ -20,13 +20,6 @@ class OrderRepository extends BaseOrderRepository
     ];
 
     /**
-     * @var array 可搜索字段别名形式
-     */
-    public $aliasFieldSearchable = [
-        'order_id' => 'id'
-    ];
-
-    /**
      * @var array 默认排序
      */
     public $defaultOrderByFields = [

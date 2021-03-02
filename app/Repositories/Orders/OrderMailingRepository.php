@@ -14,4 +14,36 @@ class OrderMailingRepository extends BaseOrderRepository
     {
         return OrderMailingModel::class;
     }
+
+    /**
+     * 重新获取多行数据方法
+     *
+     * @param array $primaryKeys
+     * @param array $extraWhere
+     * @param string $trashed
+     * @return array
+     */
+    public function getRepoListByPrimaryKeys($primaryKeys, $extraWhere = [], $trashed = '')
+    {
+        $extraWhere = array_merge($this->scopeQuery, $extraWhere);
+
+        // 获取表所有字段列表
+        $select = $this->model->tableColumn;
+        // 去除位置字段
+        unset($select['point']);
+        // 增加经纬度
+        $select = array_keys($select);
+        array_push($select, 'x(point) lng', 'y(point) lat');
+
+        return $this->model
+            ->selectRaw(implode(',', $select))
+            ->whereIn('order_id', $primaryKeys)
+            ->when(! empty($extraWhere), function ($query) use ($extraWhere) {
+                return $query->where($extraWhere);
+            })
+            ->when(! empty($trashed), function ($query) use ($trashed) {
+                return $query->$trashed();
+            })
+            ->get()->toArray();
+    }
 }

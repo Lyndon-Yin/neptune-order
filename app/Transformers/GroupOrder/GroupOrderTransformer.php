@@ -2,6 +2,7 @@
 namespace App\Transformers\GroupOrder;
 
 
+use App\Models\Orders\OrderModel;
 use App\Transformers\BaseTransformer;
 
 class GroupOrderTransformer extends BaseTransformer
@@ -16,7 +17,7 @@ class GroupOrderTransformer extends BaseTransformer
             $orderItems = [];
             foreach ($param['order_items'] as $val) {
                 $orderItems[] = [
-                    'id' => hash_ids_encode($val['id']),
+                    'id'           => hash_ids_encode($val['id']),
                     'goods_name'   => $val['goods_name'],
                     'entity_img'   => $val['entity_img'],
                     'entity_price' => $val['entity_price'],
@@ -30,6 +31,28 @@ class GroupOrderTransformer extends BaseTransformer
 
             $param['order_items'] = $orderItems;
             unset($orderItems);
+        }
+
+        if (! empty($param['order_mailing'])) {
+            $tmp = $param['order_mailing'];
+
+            $param['order_mailing'] = [
+                'consignee_name'   => $tmp['consignee_name'],
+                'consignee_phone'  => $tmp['consignee_phone'],
+                'shipping_address' => $tmp['shipping_address'],
+                'shipping_no'      => $tmp['shipping_no'],
+                'shipping_time'    => $tmp['shipping_time']
+            ];
+        }
+
+        if ($param['delivery_type'] == OrderModel::DELIVERY_FETCH_HOME && ! empty($param['order_mailing_home'])) {
+            $tmp = $param['order_mailing_home'];
+
+            $param['order_mailing_home'] = [
+                'consignee_name'   => $tmp['consignee_name'],
+                'consignee_phone'  => $tmp['consignee_phone'],
+                'shipping_address' => $tmp['shipping_address']
+            ];
         }
 
         return $param;
