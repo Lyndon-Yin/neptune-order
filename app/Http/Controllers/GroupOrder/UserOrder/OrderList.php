@@ -60,6 +60,16 @@ class OrderList extends BaseOrderAction
      *       "order_status": 0,  // 0:未支付,9:等待支付完成,20:已支付,60:已收货
      *       "order_remark": "",
      *       "order_time": null,
+     *       "group_buy": {
+     *          "group_id": "w27W2V",  // 团购模板ID
+     *          "group_batch_id": "xGw832", // 团购模板批次ID
+     *          "alpha_id": "WGqb2n", // 团长ID
+     *          "alpha_group_id": "OGvNGR", // 团长开团ID
+     *          "alpha_batch_id": "grJWGw", // 团长开团批次ID
+     *          "alpha_group_name": "开团名称", // 团长开团名称
+     *          "arrival_date": "2021-12-05", // 到货日期
+     *          "arrival_time": "09:18~13:54" // 到货时间
+     *       },
      *       "order_items": [{
      *          "id": "QGeB2b",
      *          "goods_name": "iphone 11 128G 墨绿",

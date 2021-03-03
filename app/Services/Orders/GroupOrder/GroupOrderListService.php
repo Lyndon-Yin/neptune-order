@@ -81,6 +81,10 @@ class GroupOrderListService extends BaseService
         // od_orders表查询
         $result = $this->orderRepo->getRepoListByPrimaryKeys($orderIds);
 
+        // od_order_group_buy
+        $groupBuy = $this->orderGroupBuyRepo->getRepoListByPrimaryKeys($orderIds);
+        $groupBuy = array_column($groupBuy, null, 'order_id');
+
         // od_order_items表查询
         $orderItems = $this->orderItemRepo->getOrderItemsByOrderIds($orderIds);
 
@@ -94,11 +98,12 @@ class GroupOrderListService extends BaseService
 
         // 数据合并
         foreach ($result as &$val) {
+            $val['group_buy'] = (isset($groupBuy[$val['id']])) ? $groupBuy[$val['id']] : [];
             $val['order_items'] = isset($orderItems[$val['id']]) ? $orderItems[$val['id']] : [];
             $val['order_mailing'] = isset($orderMailing[$val['id']]) ? $orderMailing[$val['id']] : [];
             $val['order_mailing_home'] = isset($orderMailingHome[$val['id']]) ? $orderMailingHome[$val['id']] : [];
         }
-        unset($val, $orderItems, $orderMailing, $orderMailingHome);
+        unset($val, $orderItems, $orderMailing, $orderMailingHome, $groupBuy);
 
         $result = (new GroupOrderTransformer($result, 2))->toArray();
 

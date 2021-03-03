@@ -55,6 +55,21 @@ class GroupOrderTransformer extends BaseTransformer
             ];
         }
 
+        if (! empty($param['group_buy'])) {
+            $tmp = $param['group_buy'];
+
+            $param['group_buy'] = [
+                'group_id'         => hash_ids_encode($tmp['group_id']),
+                'group_batch_id'   => hash_ids_encode($tmp['group_batch_id']),
+                'alpha_id'         => hash_ids_encode($tmp['alpha_id']),
+                'alpha_group_id'   => hash_ids_encode($tmp['alpha_group_id']),
+                'alpha_batch_id'   => hash_ids_encode($tmp['alpha_batch_id']),
+                'alpha_group_name' => $tmp['alpha_group_name'],
+                'arrival_date'     => $tmp['arrival_date'],
+                'arrival_time'     => $tmp['arrival_time']
+            ];
+        }
+
         return $param;
     }
 }
