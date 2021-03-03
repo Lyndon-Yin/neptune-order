@@ -22,4 +22,14 @@ class OrderGroupBuyModel extends BaseOrderModel
         'arrival_date'     => 'null',
         'arrival_time'     => 'string',
     ];
+
+    /**
+     * 关联订单主表
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function order()
+    {
+        return $this->hasOne(OrderModel::class, 'id', 'order_id');
+    }
 }
