@@ -20,18 +20,24 @@ if (! function_exists('get_page_size')) {
      * 解析用户page_size传参
      *
      * @param array $param
-     * @param null $default
-     * @return int|null
+     * @param int $default
+     * @return int
      */
-    function get_page_size($param = [], $default = null)
+    function get_page_size($param = [], $default = 15)
     {
-        if (empty($param['page_size'])) {
+        if (! isset($param['page_size'])) {
             return $default;
         }
 
         $pageSize = intval($param['page_size']);
 
-        return $pageSize > 0 ? $pageSize : $default;
+        if ($pageSize < 0) {
+            return -1;
+        } elseif ($pageSize == 0) {
+            return $default;
+        } else {
+            return $pageSize;
+        }
     }
 }
 

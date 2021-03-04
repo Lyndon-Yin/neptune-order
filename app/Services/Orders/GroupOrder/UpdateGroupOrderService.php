@@ -4,9 +4,10 @@ namespace App\Services\Orders\GroupOrder;
 
 use App\innerApi\PaymentAppApi;
 use App\Models\Orders\OrderModel;
-use App\Traits\Orders\OrderPaymentTrait;
 use Lyndon\RedisLock\OptimisticLockTrait;
 use App\Services\Orders\BaseCore\OrderUpdateService;
+use App\Traits\Orders\OrderPayment\CreateOrderPaymentTrait;
+use App\Traits\Orders\OrderPayment\UpdateOrderPaymentTrait;
 
 /**
  * Class UpdateGroupOrderService
@@ -15,8 +16,10 @@ use App\Services\Orders\BaseCore\OrderUpdateService;
 class UpdateGroupOrderService extends OrderUpdateService
 {
     use OptimisticLockTrait;
-    use OrderPaymentTrait {
+    use CreateOrderPaymentTrait {
         doPay as protected traitDoPay;
+    }
+    use UpdateOrderPaymentTrait {
         payComplete as protected traitPayComplete;
     }
 
