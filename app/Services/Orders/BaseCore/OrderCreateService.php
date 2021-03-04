@@ -33,43 +33,30 @@ class OrderCreateService extends BaseOrderService
         }
 
         foreach ($buyEntities as $val) {
-            if (empty($val['quantity']) || empty($val['entity_id'])) {
-                continue;
+            // 只有购买的"商品价格"和"数量"为必传值，其他值均可为空
+            if (empty($val['buy_quantity']) || empty($val['entity_price'])) {
+                throw new \Exception('购买的商品数量或价格不能为空');
             }
 
-            $quantity = intval($val['quantity']);
-            if ($quantity <= 0) {
-                continue;
+            $val['buy_quantity'] = intval($val['buy_quantity']);
+            if ($val['buy_quantity'] < 1) {
+                throw new \Exception('购买的商品数量必须大于1');
             }
-            $entityId = trim($val['entity_id']);
-
-            if (isset($this->buyEntities[$entityId])) {
-                $tmp = $this->buyEntities[$entityId];
-
-                $this->buyEntities[$entityId] = [
-                    'entity_id' => $entityId,
-                    'quantity'  => $tmp['quantity'] + $quantity
-                ];
-            } else {
-                $this->buyEntities[$entityId] = [
-                    'entity_id' => $entityId,
-                    'quantity'  => $quantity
-                ];
+            $val['entity_price'] = round($val['entity_price'], 2);
+            if ($val['entity_price'] < 0.01) {
+                throw new \Exception('购买的商品价格不能小于0.01');
             }
+
+            $this->buyEntities[] = [
+                'goods_id'          => empty($val['goods_id']) ? 0 : intval($val['goods_id']),
+                'entity_id'         => empty($val['entity_id']) ? 0 : intval($val['entity_id']),
+                'goods_name'        => empty($val['goods_name']) ? '' : trim($val['goods_name']),
+                'entity_img'        => empty($val['entity_img']) ? '' : trim($val['entity_img']),
+                'entity_price'      => $val['entity_price'],
+                'entity_spec_value' => empty($val['entity_spec_value']) ? '' : trim($val['entity_spec_value']),
+                'buy_quantity'      => $val['buy_quantity']
+            ];
         }
-    }
-
-    /**
-     * 添加配送类型，快递/自提等
-     *
-     * @param int $deliveryType
-     * @return $this
-     */
-    public function pushDeliveryType(int $deliveryType)
-    {
-        $this->deliveryType = intval($deliveryType);
-
-        return $this;
     }
 
     /**
@@ -78,15 +65,13 @@ class OrderCreateService extends BaseOrderService
      */
     public function createOrder()
     {
-        // 初始化订单ID
-        $this->orderId = order_id();
-
-        // 根据传参实体填充订单详情表
-        $this->fillGoodsInfoForOrderItems();
-        // 验证订单详情不能为空
-        if (empty($this->orderItems)) {
+        // 验证购买的商品不能为空
+        if (empty($this->buyEntities)) {
             throw new \Exception('购买的商品不能为空');
         }
+
+        // 初始化订单ID
+        $this->orderId = order_id();
 
         $this->beforeTransaction();
 
@@ -185,6 +170,9 @@ class OrderCreateService extends BaseOrderService
         }
         unset($item, $tmpDiscountAmount);
 
+        // 支付金额等于总金额减去折扣金额
+        $this->paymentAmount = $this->totalAmount - $this->discountAmount;
+
         return true;
     }
 
@@ -200,23 +188,17 @@ class OrderCreateService extends BaseOrderService
             return;
         }
 
-        // 获取实体信息
-        $entityList = $this->getEntityByEntityIds();
-        if (empty($entityList)) {
-            throw new \Exception('购买的商品不能为空');
-        }
-
-        foreach ($entityList as $entity) {
-            $totalAmount = round($entity['quantity'] * $entity['sell_price'], 2);
+        foreach ($this->buyEntities as $entity) {
+            $totalAmount = round($entity['buy_quantity'] * $entity['entity_price'], 2);
             $this->orderItems[] = [
                 'order_id'             => $this->orderId,
                 'goods_id'             => $entity['goods_id'],
-                'entity_id'            => $entity['id'],
+                'entity_id'            => $entity['entity_id'],
                 'goods_name'           => $entity['goods_name'],
-                'entity_img'           => $entity['entity_image'],
-                'entity_price'         => $entity['sell_price'],
-                'entity_spec_value'    => $entity['spec_name_json'],
-                'buy_quantity'         => $entity['quantity'],
+                'entity_img'           => $entity['entity_img'],
+                'entity_price'         => $entity['entity_price'],
+                'entity_spec_value'    => $entity['entity_spec_value'],
+                'buy_quantity'         => $entity['buy_quantity'],
                 'item_total_amount'    => $totalAmount,
                 'item_discount_amount' => 0,
                 'item_payment_amount'  => $totalAmount
@@ -226,26 +208,11 @@ class OrderCreateService extends BaseOrderService
             $this->totalAmount += $totalAmount;
         }
 
+        // 总金额加上配送费用
+        $this->totalAmount += $this->shippingAmount;
+
         // 支付金额初始化等于订单金额
         $this->paymentAmount = $this->totalAmount;
-    }
-
-    /**
-     * return [{
-     *    "id",             // 实体ID
-     *    "goods_id",       // 商品ID
-     *    "sell_price",     // 实体价格
-     *    "goods_name",     // 商品名称
-     *    "entity_image",   // 实体图片
-     *    "spec_name_json", // 规格名称
-     *    "quantity",       // 购买数量
-     * }]
-     *
-     * @return array
-     */
-    protected function getEntityByEntityIds()
-    {
-        return [];
     }
 
     /**
@@ -255,6 +222,9 @@ class OrderCreateService extends BaseOrderService
      */
     protected function createOrderItemsTable()
     {
+        // 填充订单详情表
+        $this->fillGoodsInfoForOrderItems();
+
         // 如果存在折扣金额，每个商品共享该折扣金额
         $this->sharedDiscountAmount();
 

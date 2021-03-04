@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\GroupOrder\UserOrder;
 
 
+use Lyndon\Logger\Log;
 use Illuminate\Http\Request;
 use Lyndon\Exceptions\ValidatorException;
 use App\Validators\Orders\GroupOrderValidator;
@@ -89,6 +90,8 @@ class AddOrder extends BaseOrderAction
         try {
             $result = (new GroupOrderFacade())->createGroupOrder($param);
         } catch (\Exception $e) {
+            Log::filename('UserOrder')->error('UserOrder@AddOrder', ['param' => $param, 'msg' => form_exception_msg($e)]);
+
             return error_return($e->getMessage());
         }
 

@@ -63,14 +63,29 @@ class CreateGroupOrderService extends OrderCreateService
             throw new \Exception('到货时间为：' . $tmp . '批次，已截团');
         }
 
-        // 调用父类构造函数
-        parent::__construct($alphaGroup['merchant_id'], $userId, $buyEntities);
-
         // 类属性赋值
         $this->alphaId      = $alphaId;
         $this->alphaGroupId = $alphaGroupId;
         $this->alphaBatchId = $alphaBatchId;
         $this->alphaGroup   = $alphaGroup;
+
+        // 获取购买的商品信息列表
+        $buyEntities = array_filter($buyEntities, function ($val) {
+            if (empty($val['quantity']) || empty($val['entity_id'])) {
+                return false;
+            }
+
+            $quantity = intval($val['quantity']);
+            if ($quantity <= 0) {
+                return false;
+            }
+
+            return true;
+        });
+        $buyEntities = $this->getEntityByEntityIds($buyEntities);
+
+        // 调用父类构造函数
+        parent::__construct($alphaGroup['merchant_id'], $userId, $buyEntities);
     }
 
     /**
@@ -250,17 +265,18 @@ class CreateGroupOrderService extends OrderCreateService
     /**
      * 获取购买的实体信息
      *
+     * @param array $buyEntities
      * @return array
      * @throws \Exception
      */
-    protected function getEntityByEntityIds()
+    protected function getEntityByEntityIds($buyEntities)
     {
         // 远程获取实体信息
         $data = (GoodsAppApi::getInstance())->getEntityByEntityIds(
             $this->alphaGroup['merchant_id'],
             $this->alphaGroup['group_id'],
             $this->alphaGroup['batch']['group_batch_id'],
-            array_values($this->buyEntities)
+            array_values($buyEntities)
         );
 
         // 验证库存数量
@@ -284,13 +300,13 @@ class CreateGroupOrderService extends OrderCreateService
         // 结果处理
         return array_map(function ($val) {
             return [
-                'id'             => $val['id'],
-                'goods_id'       => $val['goods_info']['id'],
-                'sell_price'     => $val['sell_price'],
-                'goods_name'     => $val['goods_info']['goods_name'],
-                'entity_image'   => $val['entity_image'],
-                'spec_name_json' => $val['spec_name_json'],
-                'quantity'       => $val['quantity']
+                'entity_id'         => $val['id'],
+                'goods_id'          => $val['goods_info']['id'],
+                'entity_price'      => $val['sell_price'],
+                'goods_name'        => $val['goods_info']['goods_name'],
+                'entity_img'        => $val['entity_image'],
+                'entity_spec_value' => $val['spec_name_json'],
+                'buy_quantity'      => $val['quantity']
             ];
         }, $data);
     }

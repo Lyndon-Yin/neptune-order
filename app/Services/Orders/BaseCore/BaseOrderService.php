@@ -46,12 +46,26 @@ class BaseOrderService extends BaseService
         return $this->orderCategory;
     }
 
+    public function pushOrderCategory(int $orderCategory)
+    {
+        $this->orderCategory = $orderCategory;
+
+        return $this;
+    }
+
     // 订单来源
     protected $orderSource = 0;
 
     public function getOrderSource()
     {
         return $this->orderSource;
+    }
+
+    public function pushOrderSource(int $orderSource)
+    {
+        $this->orderSource = $orderSource;
+
+        return $this;
     }
 
     // 订单总金额
@@ -70,12 +84,26 @@ class BaseOrderService extends BaseService
         return $this->discountAmount;
     }
 
+    public function pushDiscountAmount(float $discountAmount)
+    {
+        $this->discountAmount = round($discountAmount, 2);
+
+        return $this;
+    }
+
     // 运费
     protected $shippingAmount = 0.00;
 
     public function getShippingAmount()
     {
         return $this->shippingAmount;
+    }
+
+    public function pushShippingAmount(float $shippingAmount)
+    {
+        $this->shippingAmount = round($shippingAmount, 2);
+
+        return $this;
     }
 
     // 实付金额
@@ -94,6 +122,13 @@ class BaseOrderService extends BaseService
         return $this->deliveryType;
     }
 
+    public function pushDeliveryType(int $deliveryType)
+    {
+        $this->deliveryType = intval($deliveryType);
+
+        return $this;
+    }
+
     // 订单状态
     protected $orderStatus = 0;
 
@@ -108,6 +143,13 @@ class BaseOrderService extends BaseService
     public function getOrderRemark()
     {
         return $this->orderRemark;
+    }
+
+    public function pushOrderRemark($orderRemark)
+    {
+        $this->orderRemark = trim($orderRemark);
+
+        return $this;
     }
 
     // 订单完成时间
