@@ -9,25 +9,35 @@ trait DetailOrderMailingTrait
 {
     use BaseOrderMailingTrait;
 
-    // 是否已经查询过邮寄信息表
+    /**
+     * @var bool 是否已经查询过邮寄信息表
+     */
     protected $hasQueryMailingTable = false;
 
-    // 订单详情数组
-    protected $orderMailingArray = [];
-
     /**
+     * 获取配送信息数组
+     *
      * @return array
      */
     public function getOrderMailingArray()
     {
         $this->initMailingInfo();
-        return $this->orderMailingArray;
+
+        return [
+            'consignee_name'   => $this->consigneeName,
+            'consignee_phone'  => $this->consigneePhone,
+            'shipping_address' => $this->shippingAddress,
+            'point_lng'        => $this->pointLng,
+            'point_lat'        => $this->pointLat,
+            'shipping_no'      => $this->shippingNo,
+            'shipping_time'    => $this->shippingTime
+        ];
     }
 
     /**
-     * 重写BaseOrderMailingTrait中方法，首次获取进行数据库查询
+     * 获取配送信息单个字段方法
      *
-     * @return string
+     * 重写BaseOrderMailingTrait中方法
      */
     public function getConsigneeName()
     {
@@ -35,44 +45,36 @@ trait DetailOrderMailingTrait
         return $this->consigneeName;
     }
 
-    /**
-     * 重写BaseOrderMailingTrait中方法，首次获取进行数据库查询
-     *
-     * @return string
-     */
     public function getConsigneePhone()
     {
         $this->initMailingInfo();
         return $this->consigneePhone;
     }
 
-    /**
-     * 重写BaseOrderMailingTrait中方法，首次获取进行数据库查询
-     *
-     * @return string
-     */
     public function getShippingAddress()
     {
         $this->initMailingInfo();
         return $this->shippingAddress;
     }
 
-    /**
-     * 重写BaseOrderMailingTrait中方法，首次获取进行数据库查询
-     *
-     * @return string
-     */
+    public function getPointLat()
+    {
+        $this->initMailingInfo();
+        return $this->pointLat;
+    }
+
+    public function getPointLng()
+    {
+        $this->initMailingInfo();
+        return $this->pointLng;
+    }
+
     public function getShippingNo()
     {
         $this->initMailingInfo();
         return $this->shippingNo;
     }
 
-    /**
-     * 重写BaseOrderMailingTrait中方法，首次获取进行数据库查询
-     *
-     * @return null|string
-     */
     public function getShippingTime()
     {
         $this->initMailingInfo();
@@ -106,8 +108,7 @@ trait DetailOrderMailingTrait
         $this->shippingAddress = $info['shipping_address'];
         $this->shippingNo      = $info['shipping_no'];
         $this->shippingTime    = $info['shipping_time'];
-
-        unset($info['order_id'], $info['created_at'], $info['updated_at'], $info['deleted_at']);
-        $this->orderMailingArray = $info;
+        $this->pointLng        = $info['point_lng'];
+        $this->pointLat        = $info['point_lat'];
     }
 }

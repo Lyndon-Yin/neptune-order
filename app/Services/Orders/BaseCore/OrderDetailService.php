@@ -46,6 +46,30 @@ class OrderDetailService extends BaseOrderService
     }
 
     /**
+     * 获取订单主表信息
+     *
+     * @return array
+     */
+    public function getOrderArray()
+    {
+        return [
+            'merchant_id'     => $this->merchantId,
+            'user_id'         => $this->userId,
+            'order_category'  => $this->orderCategory,
+            'order_source'    => $this->orderSource,
+            'total_amount'    => $this->totalAmount,
+            'discount_amount' => $this->discountAmount,
+            'shipping_amount' => $this->shippingAmount,
+            'payment_amount'  => $this->shippingAmount,
+            'delivery_type'   => $this->deliveryType,
+            'order_status'    => $this->orderStatus,
+            'order_remark'    => $this->orderRemark,
+            'order_time'      => $this->orderTime,
+            'created_at'      => $this->createdAt
+        ];
+    }
+
+    /**
      * 重写BaseOrderService中getOrderItems方法
      * 订单详情首次访问进行数据库查询
      *
