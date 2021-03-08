@@ -33,7 +33,7 @@ class OrderMailingHomeRepository extends BaseOrderRepository
         unset($select['point']);
         // 增加经纬度
         $select = array_keys($select);
-        array_push($select, 'x(point) lng', 'y(point) lat');
+        array_push($select, 'x(point) point_lng', 'y(point) point_lat');
 
         return $this->model
             ->selectRaw(implode(',', $select))
@@ -65,7 +65,7 @@ class OrderMailingHomeRepository extends BaseOrderRepository
         unset($select['point']);
         // 增加经纬度
         $select = array_keys($select);
-        array_push($select, 'x(point) lng', 'y(point) lat');
+        array_push($select, 'x(point) point_lng', 'y(point) point_lat');
 
         $result = $this->model
             ->selectRaw(implode(',', $select))

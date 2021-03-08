@@ -116,7 +116,7 @@ class UpdateGroupOrderService extends OrderUpdateService
     }
 
     /**
-     * 订单核销（确认收货）
+     * 订单核销（订单完成）
      *
      * @throws \Lyndon\Exceptions\ModelException
      * @throws \Exception
@@ -130,9 +130,9 @@ class UpdateGroupOrderService extends OrderUpdateService
 
         $this->orderRepo->editRepoRow(
             $this->orderId,
-            ['order_status' => OrderModel::ORDER_GET]
+            ['order_status' => OrderModel::ORDER_COMPLETED]
         );
 
-        $this->orderStatus = OrderModel::ORDER_GET;
+        $this->orderStatus = OrderModel::ORDER_COMPLETED;
     }
 }

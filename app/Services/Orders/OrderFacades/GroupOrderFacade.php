@@ -2,7 +2,9 @@
 namespace App\Services\Orders\OrderFacades;
 
 
+use App\Transformers\GroupOrder\GroupOrderTransformer;
 use App\Services\Orders\GroupOrder\CreateGroupOrderService;
+use App\Services\Orders\GroupOrder\GroupOrderDetailService;
 use App\Services\Orders\GroupOrder\UpdateGroupOrderService;
 
 /**
@@ -148,5 +150,27 @@ class GroupOrderFacade
         }
 
         $orderObj->orderVerification();
+    }
+
+    /**
+     * 订单详情
+     *
+     * @param array $param
+     * @return array
+     * @throws \Exception
+     */
+    public function groupOrderDetail($param)
+    {
+        $obj = new GroupOrderDetailService($param['order_id']);
+
+        // od_orders表
+        $result = $obj->pullOrderItems()
+            ->pullOrderGroupBuy()
+            ->pullOrderPayment()
+            ->pullOrderMailing()
+            ->pullOrderMailingHome()
+            ->toResult();
+
+        return (new GroupOrderTransformer($result, 1))->toArray();
     }
 }

@@ -59,8 +59,6 @@ class OrderModel extends BaseOrderModel
 
     // 未支付取消
     const ORDER_NO_PAY_CANCEL = 100;
-    // 未支付取消已退款
-    const ORDER_NO_PAY_CANCEL_COMPLETED = 81;
     // 已支付取消（商家）/待退款（会员）
     const ORDER_PAYED_CANCEL = 110;
     // 支付取消已退款
