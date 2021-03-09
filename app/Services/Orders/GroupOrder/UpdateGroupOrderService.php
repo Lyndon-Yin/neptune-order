@@ -8,6 +8,7 @@ use Lyndon\RedisLock\OptimisticLockTrait;
 use App\Services\Orders\BaseCore\OrderUpdateService;
 use App\Traits\Orders\OrderPayment\CreateOrderPaymentTrait;
 use App\Traits\Orders\OrderPayment\UpdateOrderPaymentTrait;
+use App\Traits\Orders\OrderMailing\UpdateOrderMailingTrait;
 
 /**
  * Class UpdateGroupOrderService
@@ -15,7 +16,7 @@ use App\Traits\Orders\OrderPayment\UpdateOrderPaymentTrait;
  */
 class UpdateGroupOrderService extends OrderUpdateService
 {
-    use OptimisticLockTrait;
+    use OptimisticLockTrait, UpdateOrderMailingTrait;
     use CreateOrderPaymentTrait {
         doPay as protected traitDoPay;
     }

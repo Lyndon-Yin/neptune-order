@@ -131,6 +131,30 @@ class GroupOrderFacade
     }
 
     /**
+     * 商家订单发货
+     *
+     * @param array $param
+     * @throws \Exception
+     */
+    public function groupOrderShipping($param)
+    {
+        $merchantId = hash_ids_decode($param['merchant_id']);
+        if (empty($merchantId)) {
+            throw new \Exception('未识别商家ID');
+        }
+
+        $orderObj = new UpdateGroupOrderService($param['order_id']);
+        if ($orderObj->getMerchantId() != $merchantId) {
+            throw new \Exception('未识别该订单ID');
+        }
+
+        // 订单发货操作
+        $param['shipping_no']   = trim($param['shipping_no']);
+        $param['shipping_time'] = empty($param['shipping_time']) ? '' : trim($param['shipping_time']);
+        $orderObj->doShipping($param['shipping_no'], $param['shipping_time']);
+    }
+
+    /**
      * 订单核销（确认收货）
      *
      * @param $param
