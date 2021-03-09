@@ -17,11 +17,15 @@ use App\Traits\Orders\OrderMailing\UpdateOrderMailingTrait;
 class UpdateGroupOrderService extends OrderUpdateService
 {
     use OptimisticLockTrait, UpdateOrderMailingTrait;
-    use CreateOrderPaymentTrait {
+    use CreateOrderPaymentTrait, UpdateOrderPaymentTrait {
         doPay as protected traitDoPay;
-    }
-    use UpdateOrderPaymentTrait {
         payComplete as protected traitPayComplete;
+
+        // 解决方法冲突，使用UpdateOrderPaymentTrait中的方法
+        UpdateOrderPaymentTrait::getPaymentTime insteadof CreateOrderPaymentTrait;
+        UpdateOrderPaymentTrait::getPaymentType insteadof CreateOrderPaymentTrait;
+        UpdateOrderPaymentTrait::getPaymentTypeAmount insteadof CreateOrderPaymentTrait;
+        UpdateOrderPaymentTrait::getAccountBalanceAmount insteadof CreateOrderPaymentTrait;
     }
 
     /**
