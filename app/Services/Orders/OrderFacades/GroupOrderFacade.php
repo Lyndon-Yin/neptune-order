@@ -163,7 +163,29 @@ class GroupOrderFacade
     {
         $obj = new GroupOrderDetailService($param['order_id']);
 
-        // od_orders表
+        // 根据不同角色，进行数据安全验证
+        if (isset($param['merchant_id'])) {
+            $merchantId = hash_ids_decode($param['merchant_id']);
+            if (empty($merchantId)) {
+                throw new \Exception('未识别商家ID');
+            }
+
+            if ($obj->getMerchantId() != $merchantId) {
+                return [];
+            }
+        }
+        if (isset($param['user_id'])) {
+            $userId = hash_ids_decode($param['user_id']);
+            if (empty($userId)) {
+                throw new \Exception('未识别用户ID');
+            }
+
+            if ($obj->getUserId() != $userId) {
+                return [];
+            }
+        }
+
+        // 数据库查询
         $result = $obj->pullOrderItems()
             ->pullOrderGroupBuy()
             ->pullOrderPayment()
