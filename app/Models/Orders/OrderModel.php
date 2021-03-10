@@ -64,6 +64,8 @@ class OrderModel extends BaseOrderModel
     const ORDER_WAIT_PAID_COMPLETED = 9;
     // 已支付（商家）/待发货（会员）
     const ORDER_PAID = 20;
+    // 支付失败
+    const ORDER_PAID_FAILED = 21;
     // 已发货（商家）/待收货（会员）
     const ORDER_SHIP = 40;
     // 已收货

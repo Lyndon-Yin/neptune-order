@@ -46,15 +46,20 @@ class UpdateGroupOrderService extends OrderUpdateService
             return ['pay_complete' => 1];
         }
 
-        // 调起三方支付
         try {
+            // 获取订单团购信息
+            $body = $this->orderGroupBuyRepo->getRepoRowByPrimaryKey($this->orderId);
+            $body = "团购：" . $body['alpha_group_name'];
+
+            // 调起三方支付
             if ($this->paymentType == 'wx') {
                 $result = (PaymentAppApi::getInstance())->wxPay(
                     $this->userId,
                     $this->merchantId,
                     $this->orderId,
-                    $this->totalAmount,
-                    'pay-notify/group-order/wx-pay-notify'
+                    $this->paymentTypeAmount,
+                    'pay-notify/group-order/wx-pay-notify',
+                    $body
                 );
             } else {
                 throw new \Exception('暂不支持该支付类型');
@@ -87,6 +92,42 @@ class UpdateGroupOrderService extends OrderUpdateService
             // od_orders表更新
             // od_order_payment表更新
             $this->traitPayComplete();
+        } catch (\Exception $e) {
+            // 释放乐观锁
+            $this->delOptimisticLock($redisKey);
+
+            throw new \Exception($e->getMessage(), $e->getCode());
+        }
+    }
+
+    /**
+     * 支付失败
+     *
+     * @throws \Exception
+     */
+    public function payFail()
+    {
+        // 只有等待支付完成订单才可以支付失败
+        if ($this->orderStatus != OrderModel::ORDER_WAIT_PAID_COMPLETED) {
+            throw new \Exception('订单状态异常' . $this->orderStatus);
+        }
+
+        // redis乐观锁实现幂等性验证
+        $redisKey = ':idempotent:order:pay-fail:' . $this->orderId;
+        if (! $this->addOptimisticLock($redisKey, 1, 60)) {
+            // 添加失败，说明该订单状态已经更改
+            return;
+        }
+
+        try {
+            // od_orders表更新
+            $this->orderRepo->editRepoRow(
+                $this->orderId,
+                [
+                    'order_status' => OrderModel::ORDER_PAID_FAILED,
+                    'order_remark' => date('Y-m-d H:i:s') . ' 支付失败'
+                ]
+            );
         } catch (\Exception $e) {
             // 释放乐观锁
             $this->delOptimisticLock($redisKey);

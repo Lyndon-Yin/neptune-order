@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\PayNotify\GroupOrder;
 
 
+use Lyndon\Logger\Log;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseAction;
 use App\Services\Orders\GroupOrder\UpdateGroupOrderService;
@@ -19,10 +20,18 @@ class WxPayNotify extends BaseAction
 
     public function onRun(Request $request)
     {
-        $param = $request->only('order_id');
+        $param = $request->only('trade_no', 'paid');
 
         try {
-            (new UpdateGroupOrderService($param['order_id']))->payComplete();
+            if (! empty($param['paid'])) {
+                // 支付完成
+                (new UpdateGroupOrderService($param['trade_no']))->payComplete();
+            } else {
+                // 支付失败
+                (new UpdateGroupOrderService($param['trade_no']))->payFail();
+
+                Log::filename('WxPayNotify')->info('WxPayNotify', ['param' => $request->all()]);
+            }
         } catch (\Exception $e) {
             return error_return($e->getMessage());
         }
