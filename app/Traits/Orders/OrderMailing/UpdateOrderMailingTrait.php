@@ -28,7 +28,7 @@ trait UpdateOrderMailingTrait
         }
 
         // 验证订单状态，只有已支付可以进行发货
-        if ($this->orderStatus != OrderModel::ORDER_PAYED) {
+        if ($this->orderStatus != OrderModel::ORDER_PAID) {
             throw new \Exception('订单状态异常' . $this->orderStatus);
         }
 

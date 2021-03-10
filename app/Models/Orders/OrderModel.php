@@ -61,9 +61,9 @@ class OrderModel extends BaseOrderModel
     // 未支付
     const ORDER_INIT = 0;
     // 等待支付完成状态
-    const ORDER_WAIT_PAYED_COMPLETED = 9;
+    const ORDER_WAIT_PAID_COMPLETED = 9;
     // 已支付（商家）/待发货（会员）
-    const ORDER_PAYED = 20;
+    const ORDER_PAID = 20;
     // 已发货（商家）/待收货（会员）
     const ORDER_SHIP = 40;
     // 已收货
@@ -72,9 +72,9 @@ class OrderModel extends BaseOrderModel
     const ORDER_COMPLETED = 80;
 
     // 未支付取消
-    const ORDER_NO_PAY_CANCEL = 100;
+    const ORDER_UNPAID_CANCEL = 100;
     // 已支付取消（商家）/待退款（会员）
-    const ORDER_PAYED_CANCEL = 110;
+    const ORDER_PAID_CANCEL = 110;
     // 支付取消已退款
-    const ORDER_PAYED_CANCEL_COMPLETED = 82;
+    const ORDER_PAID_CANCEL_COMPLETED = 111;
 }

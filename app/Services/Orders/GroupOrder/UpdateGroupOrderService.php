@@ -112,12 +112,12 @@ class UpdateGroupOrderService extends OrderUpdateService
         $this->orderRepo->editRepoRow(
             $this->orderId,
             [
-                'order_status' => OrderModel::ORDER_NO_PAY_CANCEL,
+                'order_status' => OrderModel::ORDER_UNPAID_CANCEL,
                 'order_remark' => $this->orderRemark
             ]
         );
 
-        $this->orderStatus = OrderModel::ORDER_NO_PAY_CANCEL;
+        $this->orderStatus = OrderModel::ORDER_UNPAID_CANCEL;
     }
 
     /**
@@ -129,7 +129,7 @@ class UpdateGroupOrderService extends OrderUpdateService
     public function orderVerification()
     {
         // 只有已支付订单可以核销
-        if ($this->orderStatus != OrderModel::ORDER_PAYED) {
+        if ($this->orderStatus != OrderModel::ORDER_PAID) {
             throw new \Exception('订单状态异常' . $this->orderStatus);
         }
 

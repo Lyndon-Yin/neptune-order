@@ -37,7 +37,7 @@ trait UpdateOrderPaymentTrait
     protected function payComplete()
     {
         // 验证订单状态
-        if ($this->orderStatus != OrderModel::ORDER_WAIT_PAYED_COMPLETED) {
+        if ($this->orderStatus != OrderModel::ORDER_WAIT_PAID_COMPLETED) {
             throw new \Exception('订单状态异常' . $this->orderStatus);
         }
 
@@ -52,7 +52,7 @@ trait UpdateOrderPaymentTrait
             DB::beginTransaction();
 
             // od_orders状态改变
-            $this->orderRepo->editRepoRow($this->orderId, ['order_status' => OrderModel::ORDER_PAYED]);
+            $this->orderRepo->editRepoRow($this->orderId, ['order_status' => OrderModel::ORDER_PAID]);
 
             // od_order_payment表更新
             $this->orderPayRepo->editRepoRow($this->orderId, ['payment_time' => $currentDatetime]);
@@ -65,6 +65,6 @@ trait UpdateOrderPaymentTrait
         }
 
         $this->paymentTime = $currentDatetime;
-        $this->orderStatus = OrderModel::ORDER_PAYED;
+        $this->orderStatus = OrderModel::ORDER_PAID;
     }
 }

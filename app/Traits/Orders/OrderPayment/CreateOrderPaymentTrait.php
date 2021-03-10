@@ -45,7 +45,7 @@ trait CreateOrderPaymentTrait
             // od_orders状态改变
             $this->orderRepo->editRepoRow(
                 $this->orderId,
-                ['order_status' => OrderModel::ORDER_WAIT_PAYED_COMPLETED]
+                ['order_status' => OrderModel::ORDER_WAIT_PAID_COMPLETED]
             );
 
             // od_order_payment表创建或者更新
@@ -71,7 +71,7 @@ trait CreateOrderPaymentTrait
             throw new \Exception($e->getMessage(), $e->getCode());
         }
 
-        $this->orderStatus = OrderModel::ORDER_WAIT_PAYED_COMPLETED;
+        $this->orderStatus = OrderModel::ORDER_WAIT_PAID_COMPLETED;
     }
 
     /**
@@ -89,7 +89,7 @@ trait CreateOrderPaymentTrait
         }
 
         // 验证订单状态
-        $noPayStatus = [OrderModel::ORDER_INIT, OrderModel::ORDER_WAIT_PAYED_COMPLETED];
+        $noPayStatus = [OrderModel::ORDER_INIT, OrderModel::ORDER_WAIT_PAID_COMPLETED];
         if (! in_array($this->orderStatus, $noPayStatus)) {
             throw new \Exception('订单状态异常' . $this->orderStatus);
         }
