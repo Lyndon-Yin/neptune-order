@@ -50,8 +50,8 @@ class OrderList extends BaseOrderAction
      *       "id": 47918707397099520,
      *       "merchant_id": "WGqb2n",
      *       "user_id": "WGqb2n",
-     *       "order_category": 0,
-     *       "order_source": 0,
+     *       "order_category": 0, // 订单分类，0：未知分类，1：团购订单
+     *       "order_source": 0,   // 订单来源，0：未知来源，1：微信小程序，2：网页
      *       "total_amount": "44.33",   // 订单总金额
      *       "discount_amount": "0.00", // 订单总折扣金额
      *       "shipping_amount": "0.00", // 配送费

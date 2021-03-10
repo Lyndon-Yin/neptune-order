@@ -33,6 +33,20 @@ class OrderModel extends BaseOrderModel
         'ali' => '支付宝支付'
     ];
 
+    /** 订单分类 **/
+    // 未知分类
+    const CATEGORY_NONE = 0;
+    // 团购订单
+    const CATEGORY_GROUP = 1;
+
+    /** 订单来源 **/
+    // 未知来源
+    const SOURCE_NONE = 0;
+    // 微信小程序
+    const SOURCE_WX_MINI_APP = 1;
+    // web管理后台
+    const SOURCE_ADMIN_WEB = 2;
+
     /** 快递配送类型 **/
     // 无配送类型，默认值
     const DELIVERY_NONE = 0;

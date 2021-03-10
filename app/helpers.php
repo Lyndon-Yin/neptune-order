@@ -1,6 +1,7 @@
 <?php
 
 use Lyndon\Snowflake;
+use App\Models\Orders\OrderModel;
 
 
 if (! function_exists('order_id')) {
@@ -89,5 +90,27 @@ if (! function_exists('distance')) {
         $s = 2 * $earthRadius * asin(sqrt($s));
 
         return round($s, 1);
+    }
+}
+
+if (! function_exists('get_order_source')) {
+    /**
+     * 获取订单来源
+     *
+     * @return int
+     */
+    function get_order_source()
+    {
+        $source = request()->header('Request-Source', '');
+
+        if (empty($source)) {
+            return OrderModel::SOURCE_NONE;
+        } elseif ($source == 'wx-mini-app') {
+            return OrderModel::SOURCE_WX_MINI_APP;
+        } elseif ($source == 'admin-web') {
+            return OrderModel::SOURCE_ADMIN_WEB;
+        } else {
+            return OrderModel::SOURCE_NONE;
+        }
     }
 }

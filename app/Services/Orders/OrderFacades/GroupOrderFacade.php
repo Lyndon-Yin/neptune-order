@@ -2,6 +2,7 @@
 namespace App\Services\Orders\OrderFacades;
 
 
+use App\Models\Orders\OrderModel;
 use App\Transformers\GroupOrder\GroupOrderTransformer;
 use App\Services\Orders\GroupOrder\CreateGroupOrderService;
 use App\Services\Orders\GroupOrder\GroupOrderDetailService;
@@ -63,10 +64,13 @@ class GroupOrderFacade
                 throw new \Exception('未识别用户收获地址ID');
             }
         }
-        $orderObj->pushDeliveryType($param['delivery_type'])->pushUserAddressId($userAddressId);
+        $orderObj->pushDeliveryType($param['delivery_type'])
+            ->pushUserAddressId($userAddressId);
 
         // 订单创建
-        $orderObj->createOrder();
+        $orderObj->pushOrderSource(get_order_source())
+            ->pushOrderCategory(OrderModel::CATEGORY_GROUP)
+            ->createOrder();
 
         return ['order_id' => $orderObj->getOrderId()];
     }
